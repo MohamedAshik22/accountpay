@@ -8,6 +8,12 @@ const Home: React.FC = () => {
             <Link to="/pftracker" className="text-blue-500 hover:underline">
                 Go to PFT
             </Link>
+            <Link to="/login" className="text-blue-500 hover:underline">
+                Login
+            </Link>
+            <Link to="/register" className="text-blue-500 hover:underline">
+                Register
+            </Link>
         </div>
     );
 };

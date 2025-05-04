@@ -4,9 +4,11 @@ import { Link } from 'react-router-dom';
 interface RegisterFormProps {
   name: string;
   email: string;
+  phone: string;
   password: string;
   onNameChange: (val: string) => void;
   onEmailChange: (val: string) => void;
+  onPhoneChange: (val: string) => void;
   onPasswordChange: (val: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   error?: string | null;
@@ -15,9 +17,11 @@ interface RegisterFormProps {
 const RegisterForm: React.FC<RegisterFormProps> = ({
   name,
   email,
+  phone,
   password,
   onNameChange,
   onEmailChange,
+  onPhoneChange,
   onPasswordChange,
   onSubmit,
   error,
@@ -45,6 +49,17 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           type="email"
           value={email}
           onChange={(e) => onEmailChange(e.target.value)}
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+          required
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-semibold mb-1">Phone</label>
+        <input
+          type="text"
+          value={phone}
+          onChange={(e) => onPhoneChange(e.target.value)}
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
           required
         />

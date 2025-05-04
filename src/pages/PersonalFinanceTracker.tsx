@@ -11,6 +11,8 @@ interface IncomeExpense {
   createdAt: string;
 }
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 const IncomeExpense: React.FC = () => {
   const [incomeExpenses, setIncomeExpenses] = useState<IncomeExpense[]>([]);
   const [summary, setSummary] = useState<{ income: number; expense: number; netBalance: number }>({ income: 0, expense: 0, netBalance: 0 });
@@ -33,7 +35,7 @@ const IncomeExpense: React.FC = () => {
         return;
       }
 
-      const recordsResponse = await axios.get('http://localhost:3000/api/income-expenses', {
+      const recordsResponse = await axios.get(`${apiUrl}/income-expenses`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -118,7 +120,7 @@ const IncomeExpense: React.FC = () => {
         return;
       }
 
-      const response = await axios.post('http://localhost:3000/api/income-expenses',
+      const response = await axios.post(`${apiUrl}/income-expenses`,
         { 
           type: newRecordType, 
           amount, 
@@ -148,7 +150,7 @@ const IncomeExpense: React.FC = () => {
         return;
       }
 
-      const response = await axios.put(`http://localhost:3000/api/income-expenses/${editingRecord._id}`, 
+      const response = await axios.put(`${apiUrl}/income-expenses/${editingRecord._id}`, 
         { 
           type: editingRecord.type, 
           amount: editingRecord.amount, 
@@ -175,7 +177,7 @@ const IncomeExpense: React.FC = () => {
         return;
       }
 
-      await axios.delete(`http://localhost:3000/api/income-expenses/${recordId}`, 
+      await axios.delete(`${apiUrl}/income-expenses/${recordId}`, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
       

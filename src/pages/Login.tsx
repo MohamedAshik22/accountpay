@@ -4,17 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/Login';
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [loginIdentifier, setLoginIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const res = await axios.post('http://localhost:3000/users/login', { email, password });
+      const res = await axios.post(`${apiUrl}/users/login`, { 
+        loginIdentifier, 
+        password 
+      });
       localStorage.setItem('token', res.data.token);
       navigate('/');
     } catch (err) {
@@ -26,14 +32,13 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <LoginForm
-        email={email}
+        loginIdentifier={loginIdentifier}
         password={password}
-        onEmailChange={setEmail}
+        onLoginIdentifierChange={setLoginIdentifier}
         onPasswordChange={setPassword}
         onSubmit={handleLogin}
         error={error}
       />
-      
     </div>
   );
 };

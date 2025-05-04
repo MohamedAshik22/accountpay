@@ -6,18 +6,22 @@ import RegisterForm from '../components/RegisterForm';
 const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const res = await axios.post('http://localhost:3000/users/register', {
+      const res = await axios.post(`${apiUrl}/users`, {
         name,
         email,
+        phone,
         password,
       });
 
@@ -34,9 +38,11 @@ const RegisterPage: React.FC = () => {
       <RegisterForm
         name={name}
         email={email}
+        phone={phone}
         password={password}
         onNameChange={setName}
         onEmailChange={setEmail}
+        onPhoneChange={setPhone}
         onPasswordChange={setPassword}
         onSubmit={handleRegister}
         error={error}

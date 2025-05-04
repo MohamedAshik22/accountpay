@@ -2,18 +2,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 interface LoginFormProps {
-  email: string;
+  loginIdentifier: string;
   password: string;
-  onEmailChange: (val: string) => void;
+  onLoginIdentifierChange: (val: string) => void;
   onPasswordChange: (val: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   error?: string | null;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({
-  email,
+  loginIdentifier,
   password,
-  onEmailChange,
+  onLoginIdentifierChange,
   onPasswordChange,
   onSubmit,
   error,
@@ -25,12 +25,13 @@ const LoginForm: React.FC<LoginFormProps> = ({
       {error && <div className="text-red-500 mb-4 text-center">{error}</div>}
 
       <div className="mb-4">
-        <label className="block text-sm font-semibold mb-1">Email</label>
+        <label className="block text-sm font-semibold mb-1">Email or Phone</label>
         <input
-          type="email"
-          value={email}
-          onChange={(e) => onEmailChange(e.target.value)}
+          type="text"
+          value={loginIdentifier}
+          onChange={(e) => onLoginIdentifierChange(e.target.value)}
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+          placeholder="Enter email or phone number"
           required
         />
       </div>
@@ -52,12 +53,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
       >
         Login
       </button>
-      <p className="mt-4 text-center">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-blue-500 hover:underline">
-            Register here
-          </Link>
-        </p>
+
+      <div className="mt-4 text-center">
+        <Link to="/register" className="text-blue-600 hover:underline">
+          Don't have an account? Register
+        </Link>
+      </div>
     </form>
   );
 };

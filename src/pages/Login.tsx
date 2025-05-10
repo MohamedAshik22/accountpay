@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
     setError(null);
 
     try {
-      const res = await axios.post(`${apiUrl}/users/login`, { 
+      const res = await axios.post(`${apiUrl}/auth/login`, { 
         loginIdentifier, 
         password 
       });

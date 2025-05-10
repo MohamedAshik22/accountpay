@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import RegisterForm from '../components/RegisterForm';
 
 const RegisterPage: React.FC = () => {
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +20,8 @@ const RegisterPage: React.FC = () => {
 
     try {
       const res = await axios.post(`${apiUrl}/users`, {
-        name,
+        firstName,
+        lastName,
         email,
         phone,
         password,
@@ -36,11 +38,13 @@ const RegisterPage: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <RegisterForm
-        name={name}
+        firstName={firstName}
+        lastName={lastName}
         email={email}
         phone={phone}
         password={password}
-        onNameChange={setName}
+        onFirstNameChange={setFirstName}
+        onLastNameChange={setLastName}
         onEmailChange={setEmail}
         onPhoneChange={setPhone}
         onPasswordChange={setPassword}

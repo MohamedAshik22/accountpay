@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router';
+import DeleteConfirmation from '../components/Delete';
+import AddRecordModal from '../components/AddRecord';
+import { MoreVertical } from 'lucide-react';
 
 interface IncomeExpense {
   id: string;
@@ -8,8 +11,7 @@ interface IncomeExpense {
   amount: number;
   description: string;
   date: string;
-  timestamp: string;
-  createdAt: string;
+  timestamp: string; // Add timestamp to the interface
 }
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -28,15 +30,6 @@ const IncomeExpense: React.FC = () => {
   const [newRecordAmount, setNewRecordAmount] = useState('');
   const [newRecordDescription, setNewRecordDescription] = useState('');
 
-  // State for delete confirmation modal
-  const [deleteConfirmation, setDeleteConfirmation] = useState<{
-    isOpen: boolean;
-    record: IncomeExpense | null;
-  }>({
-    isOpen: false,
-    record: null
-  });
-
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -53,8 +46,8 @@ const IncomeExpense: React.FC = () => {
 
       if (Array.isArray(recordsResponse.data)) {
         const processedRecords = recordsResponse.data.map(record => {
-          const timestamp = record.createdAt
-            ? record.createdAt
+          const timestamp = record.updated_at
+            ? record.updated_at
             : (record.timestamp
               ? record.timestamp
               : new Date().toISOString());
@@ -132,7 +125,8 @@ const IncomeExpense: React.FC = () => {
         {
           type: newRecordType,
           amount,
-          description: newRecordDescription || 'N/A'
+          description: newRecordDescription || 'N/A',
+          timestamp: new Date().toISOString() // Explicitly set timestamp to current time
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -162,7 +156,8 @@ const IncomeExpense: React.FC = () => {
         {
           type: editingRecord.type,
           amount: editingRecord.amount,
-          description: editingRecord.description
+          description: editingRecord.description,
+          timestamp: new Date().toISOString() // Explicitly set timestamp to current time
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -174,58 +169,19 @@ const IncomeExpense: React.FC = () => {
     }
   };
 
-  const handleDeleteConfirmation = (record: IncomeExpense) => {
-    setDeleteConfirmation({
-      isOpen: true,
-      record: record
-    });
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteConfirmation.record) return;
-
+  const handleDelete = async (id: string) => {
     try {
-      const recordToDelete = deleteConfirmation.record;
-      
-      console.group('Delete Record Confirmation');
-      console.log('Deleting record:', recordToDelete);
-
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please log in to delete records');
-        console.groupEnd();
-        return;
-      }
-
-      const recordId = 
-        recordToDelete.id || 
-        (recordToDelete as any).recordId;
-
-      if (!recordId) {
-        console.error('No valid ID found for deletion');
-        alert('Cannot delete record: Invalid ID');
-        console.groupEnd();
-        return;
-      }
-
-      const response = await axios.delete(`${apiUrl}/income-expenses/${recordId}`, {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      await axios.delete(`${apiUrl}/income-expenses/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-
-      console.log('Delete successful', response.data);
-      await fetchData();
-      
-      // Reset confirmation state
-      setDeleteConfirmation({ isOpen: false, record: null });
-      setActiveOptionsId(null);
-
-      console.groupEnd();
+      // Refresh the list after successful deletion
+      fetchData();
     } catch (error) {
-      console.error('Delete Error:', error);
-      alert(`Failed to delete record: ${axios.isAxiosError(error) ? error.response?.data?.message : 'Unknown error'}`);
+      console.error('Error deleting record:', error);
+      // Optional: Add user-friendly error handling
+      alert('Failed to delete the record. Please try again.');
     }
   };
 
@@ -291,7 +247,7 @@ const IncomeExpense: React.FC = () => {
             const recordDate = new Date(record.timestamp);
             return recordDate.getMonth() === selectedMonth && recordDate.getFullYear() === selectedYear;
           })
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
           .map((record) => (
             <li
               key={record.id}
@@ -349,16 +305,7 @@ const IncomeExpense: React.FC = () => {
                       ₹{record.amount.toFixed(2)}
                     </span>
                     <p className="text-gray-600 text-sm">{record.description}</p>
-                    <p className="text-gray-500 text-xs">
-                      {new Date(record.timestamp).toLocaleString('en-IN', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
-                      })}
-                    </p>
+                    <p className="text-gray-600 text-sm">{new Date(record.timestamp).toLocaleString()}</p>
                   </div>
                   <div className="relative ml-2">
                     <button
@@ -370,9 +317,7 @@ const IncomeExpense: React.FC = () => {
                       }}
                       className="text-gray-500 hover:bg-gray-100 p-1 rounded"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                      </svg>
+                      <MoreVertical className="h-5 w-5" />
                     </button>
                     {activeOptionsId === record.id && (
                       <div className="absolute right-0 top-full z-10 bg-white border rounded shadow-lg options-menu mt-1">
@@ -386,15 +331,9 @@ const IncomeExpense: React.FC = () => {
                         >
                           Edit
                         </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteConfirmation(record);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
-                        >
-                          Delete
-                        </button>
+                        <DeleteConfirmation 
+                          onDelete={() => handleDelete(record.id)} 
+                        />
                       </div>
                     )}
                   </div>
@@ -437,74 +376,18 @@ const IncomeExpense: React.FC = () => {
 
       {/* Add Record Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-bold mb-4 text-center">
-              Add {newRecordType === 'income' ? 'Income' : 'Expense'}
-            </h2>
-            <input
-              type="number"
-              placeholder="Amount"
-              value={newRecordAmount}
-              onChange={(e) => setNewRecordAmount(e.target.value)}
-              className="w-full mb-4 p-2 border rounded"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Description (optional)"
-              value={newRecordDescription}
-              onChange={(e) => setNewRecordDescription(e.target.value)}
-              className="w-full mb-4 p-2 border rounded"
-            />
-            <div className="flex justify-between">
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="bg-gray-300 text-black px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAdd}
-                className={`px-4 py-2 rounded ${newRecordType === 'income'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-red-600 text-white'
-                  }`}
-              >
-                Add
-              </button>
-            </div>
-          </div>
-        </div>
+        <AddRecordModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={handleAdd}
+        newRecordType={newRecordType}
+        newRecordAmount={newRecordAmount}
+        setNewRecordAmount={setNewRecordAmount}
+        newRecordDescription={newRecordDescription}
+        setNewRecordDescription={setNewRecordDescription}
+      />
       )}
 
-      {/* Delete Confirmation Modal */}
-      {deleteConfirmation.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-bold mb-4 text-center">
-              Confirm Delete
-            </h2>
-            <p className="text-gray-600 text-sm mb-4">
-              Are you sure you want to delete this record?
-            </p>
-            <div className="flex justify-between">
-              <button
-                onClick={() => setDeleteConfirmation({ isOpen: false, record: null })}
-                className="bg-gray-300 text-black px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="bg-red-600 text-white px-4 py-2 rounded"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

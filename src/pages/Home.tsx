@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import LogOut from '../components/LogOut';
+import Profile from '../components/Profile';
 
 const Home: React.FC = () => {
     return (
@@ -11,9 +13,10 @@ const Home: React.FC = () => {
             <Link to="/login" className="text-blue-500 hover:underline">
                 Login
             </Link>
-            <Link to="/register" className="text-blue-500 hover:underline">
-                Register
+            <Link to="/profile" className="text-blue-500 hover:underline">
+                Profile
             </Link>
+            <LogOut />
         </div>
     );
 };

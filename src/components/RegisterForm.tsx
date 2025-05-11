@@ -35,28 +35,28 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
 
       {error && <div className="text-red-500 mb-4 text-center">{error}</div>}
-<div className=" flex space-x-4 mr-4">
-      <div className="mb-4">
-        <label className="block text-sm font-semibold mb-1">First Name</label>
-        <input
-          type="text"
-          value={firstName}
-          onChange={(e) => onFirstNameChange(e.target.value)}
-          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
-          required
-        />
+      <div className=" flex space-x-4 mr-4">
+        <div className="mb-4">
+          <label className="block text-sm font-semibold mb-1">First Name</label>
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => onFirstNameChange(e.target.value)}
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-semibold mb-1">Last Name</label>
+          <input
+            type="text"
+            value={lastName}
+            onChange={(e) => onLastNameChange(e.target.value)}
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+            required
+          />
+        </div>
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-semibold mb-1">Last Name</label>
-        <input
-          type="text"
-          value={lastName}
-          onChange={(e) => onLastNameChange(e.target.value)}
-          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
-          required
-        />
-      </div>
-</div>
       <div className="mb-4">
         <label className="block text-sm font-semibold mb-1">Email</label>
         <input
@@ -96,8 +96,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       >
         Register
       </button>
-      <p className="mt-4 text-center">  
-      Already have an account?{' '}
+      <p className="mt-4 text-center">
+        Already have an account?{' '}
         <Link to="/login" className="text-blue-500 hover:underline">
           Login here
         </Link>

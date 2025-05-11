@@ -183,7 +183,7 @@ const IncomeExpense: React.FC = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-4 bg-gray-100 rounded-lg shadow-md min-h-screen flex flex-col">
+    <div className="max-w-lg mx-auto p-4 bg-gray-100 rounded-lg shadow-md flex flex-col">
       <div className="page-container flex flex-col space-y-4">
 
         {/* HEADER SECTION */}
@@ -286,7 +286,7 @@ const IncomeExpense: React.FC = () => {
         </div>
 
         {/* ADD BUTTON SECTION - Appears AFTER records list, not floating */}
-        <div className="absolute bottom-14 left-0 right-0  p-4 bg-white shadow-top mt-4">
+        <div className="absolute bottom-0 left-0 right-0  p-4 bg-white shadow-top mt-4">
           {selectedMonth === new Date().getMonth() && selectedYear === new Date().getFullYear() && (
             <div className="flex justify-center space-x-4">
               <button

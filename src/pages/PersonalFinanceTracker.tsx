@@ -31,6 +31,17 @@ const IncomeExpense: React.FC = () => {
   const [newRecordType, setNewRecordType] = useState<'income' | 'expense'>('income');
   const [newRecordAmount, setNewRecordAmount] = useState('');
   const [newRecordDescription, setNewRecordDescription] = useState('');
+  const [userCreatedDate, setUserCreatedDate] = useState<Date>(new Date()); // Replace with actual user created date
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    console.log('User ID:', userId);
+
+    const userDateString = localStorage.getItem('userCreatedDate'); // Example
+    if (userDateString) {
+      setUserCreatedDate(new Date(userDateString));
+    }
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -189,13 +200,15 @@ const IncomeExpense: React.FC = () => {
         {/* HEADER SECTION */}
         <div className="header-section bg-zinc-200 p-4 rounded-t-lg shadow-sm">
           <div className="flex items-center justify-between">
-            <MonthYearSelector
-              selectedMonth={selectedMonth}
-              selectedYear={selectedYear}
-              setSelectedMonth={setSelectedMonth}
-              setSelectedYear={setSelectedYear}
-            />
-            <div className="flex items-center space-x-4">
+            {userCreatedDate && (
+              <MonthYearSelector
+                selectedMonth={selectedMonth}
+                selectedYear={selectedYear}
+                setSelectedMonth={setSelectedMonth}
+                setSelectedYear={setSelectedYear}
+                userCreatedDate={userCreatedDate}
+              />
+            )}
               <h2 className="text-xl font-bold">
                 Balance:{" "}
                 <span className={summary.netBalance >= 0 ? "text-green-600" : "text-red-600"}>
@@ -203,7 +216,6 @@ const IncomeExpense: React.FC = () => {
                 </span>
               </h2>
               <Link to="/" className="text-blue-500 hover:underline">Home</Link>
-            </div>
           </div>
         </div>
 

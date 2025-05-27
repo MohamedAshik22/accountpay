@@ -1,0 +1,33 @@
+   const acceptClearRequest = async () => {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          setError("User not authenticated.");
+          return;
+        }
+
+        try {
+          setLoading(true);
+          setError(null);
+
+          await axios.get(`${apiUrl}/transactions/clear/${userA}/${userB}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          onClearSuccess();
+        } catch (err: any) {
+          setError(err.response?.data?.error || "No pending request or error occurred.");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+       <button
+          onClick={acceptClearRequest}
+          className="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
+          disabled={loading}
+        >
+          {loading ? "Accepting..." : "Accept Clear Request"}
+        </button> 

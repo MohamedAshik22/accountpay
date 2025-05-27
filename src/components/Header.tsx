@@ -86,6 +86,12 @@ const Header: React.FC = () => {
             Finance Tracker
           </Link>
           <Link 
+            to="/credebt" 
+            className="hover:text-blue-200 transition-colors duration-300"
+          >
+            Credebt
+          </Link>
+          <Link 
             to="/profile" 
             className="flex items-center hover:text-blue-200 transition-colors duration-300"
           >

@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import LogOut from '../components/LogOut';
 import AnalyticsDashboard from '../components/AnalyticsDashboard';
 import LastFiveDaysSummary from '../components/LastSummary';
+import { User } from 'lucide-react';
+import UserList from '../components/UserList';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -81,6 +83,7 @@ const Home: React.FC = () => {
             <h1 className="text-2xl font-bold">Welcome {firstName}</h1>
 
             <div className="w-1/2 flex space-x-4">
+            <UserList />
                 {/* Pass the records to both AnalyticsDashboard and LastFiveDaysSummary components */}
                 <AnalyticsDashboard records={incomeExpenses} />
                 <LastFiveDaysSummary records={records} /> {/* Updated to use the `records` state */}

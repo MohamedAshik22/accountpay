@@ -7,6 +7,7 @@ import RegisterPage from './pages/Register';
 import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './components/Profile';
 import Header from './components/Header';
+import ChatPage from './pages/Chat';
 
 function App() {
   const location = useLocation();
@@ -28,6 +29,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/pftracker" element={<IncomeExpense />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/credebt/:userA/:userB" element={<ChatPage />} />
+
           </Route>
         </Routes>
       </main>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
+import LogOut from './LogOut';
 
 // Default user icon as SVG
 const DefaultUserIcon = () => (
@@ -30,10 +31,12 @@ interface JwtPayload {
 // Define a type for user profile
 interface UserProfile {
   image?: string;
+  firstName?: string;
 }
 
 const Header: React.FC = () => {
   const [userImage, setUserImage] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string | null>(null);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
@@ -58,6 +61,9 @@ const Header: React.FC = () => {
         if (response.data.image) {
           setUserImage(response.data.image);
         }
+        if (response.data.firstName) {
+          setFirstName(response.data.firstName);
+        }
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
@@ -65,6 +71,12 @@ const Header: React.FC = () => {
 
     fetchUserProfile();
   }, [apiUrl]);
+
+  const getInitial = () => {
+    if (!firstName) return null;
+    return firstName.charAt(0).toUpperCase();
+  };
+
 
   return (
     <header className="bg-blue-600 text-white p-4 shadow-md">
@@ -85,15 +97,10 @@ const Header: React.FC = () => {
           >
             Finance Tracker
           </Link>
-          <Link 
-            to="/credebt" 
-            className="hover:text-blue-200 transition-colors duration-300"
-          >
-            Credebt
-          </Link>
+         
           <Link 
             to="/profile" 
-            className="flex items-center hover:text-blue-200 transition-colors duration-300"
+            className="flex items-center justify-center bg-white rounded-full w-8 h-8 text-blue-600 font-bold text-lg shadow-md hover:text-black transition-colors duration-300"
           >
             {userImage ? (
               <img 
@@ -102,9 +109,12 @@ const Header: React.FC = () => {
                 className="w-8 h-8 rounded-full mr-2"
               />
             ) : (
-              <DefaultUserIcon />
+               // Show initial letter in circle background
+              getInitial() || "?"
+              // <DefaultUserIcon />
             )}
           </Link>
+          <LogOut />
         </nav>
       </div>
     </header>

@@ -14,6 +14,7 @@ export const ClearRequestPanel: React.FC<Props> = ({ userA, userB, netBalance, o
     const [amount, setAmount] = useState<number>(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showForm, setShowForm] = useState(false); // track form visibility
 
     const sendClearRequest = async () => {
         const token = localStorage.getItem("token");
@@ -42,6 +43,8 @@ export const ClearRequestPanel: React.FC<Props> = ({ userA, userB, netBalance, o
             );
 
             onClearSuccess();
+            setShowForm(false); // hide form after sending
+            setAmount(0);       // reset input
         } catch (err: any) {
             setError(err.response?.data?.error || "Failed to send clear request.");
         } finally {
@@ -50,30 +53,46 @@ export const ClearRequestPanel: React.FC<Props> = ({ userA, userB, netBalance, o
     };
 
     return (
-        <div className="rounded-xl border p-4 bg-white shadow space-y-3">
+        <div className="rounded-xl bg-gray-100">
             {error && <p className="text-red-500">{error}</p>}
 
-
             {netBalance > 0 && (
-                <div className="flex flex-col gap-2">
-                    <input
-                        type="number"
-                        placeholder="Enter amount"
-                        className="border p-2 rounded-lg"
-                        value={amount}
-                        onChange={(e) => setAmount(parseFloat(e.target.value))}
-                    />
-                    <button
-                        onClick={sendClearRequest}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
-                        disabled={loading}
-                    >
-                        {loading ? "Sending..." : "Request Clear"}
-                    </button>
+                <div>
+                    {!showForm ? (
+                        <button
+                            onClick={() => setShowForm(true)}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
+                        >
+                            Request Clear
+                        </button>
+                    ) : (
+                        <div className="flex flex-col gap-2 mt-2">
+                            <input
+                                type="number"
+                                placeholder="Enter amount"
+                                className="border p-2 rounded-lg"
+                                value={amount}
+                                onChange={(e) => setAmount(parseFloat(e.target.value))}
+                            />
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={sendClearRequest}
+                                    className="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700"
+                                    disabled={loading}
+                                >
+                                    {loading ? "Sending..." : "Submit"}
+                                </button>
+                                <button
+                                    onClick={() => setShowForm(false)}
+                                    className="bg-gray-300 text-black px-4 py-1 rounded hover:bg-gray-400"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
-
             )}
-
         </div>
     );
 };

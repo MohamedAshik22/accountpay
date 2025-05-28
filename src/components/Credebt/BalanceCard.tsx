@@ -9,7 +9,7 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({ netBalance }) => {
     typeof netBalance === 'number' ? netBalance.toFixed(2) : '0.00';
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-4">
+    <div className="bg-gray-100 flex space-x-6  p-4">
       <h2 className="text-xl font-semibold mb-2">Net Balance</h2>
       <p className={`text-2xl font-bold ${netBalance && netBalance < 0 ? 'text-green-500' : 'text-red-600'}`}>
         ₹ {formattedBalance}

@@ -45,7 +45,7 @@ export const NewTransactionForm: React.FC<Props> = ({ userA, userB, onTransactio
   
       setAmount("");
       setMessage("");
-      onTransactionCreated(); // refresh transactions
+      onTransactionCreated(); 
     } catch (err: any) {
       setError(err.response?.data?.error || "Something went wrong");
     } finally {
@@ -55,8 +55,7 @@ export const NewTransactionForm: React.FC<Props> = ({ userA, userB, onTransactio
   
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow space-y-4">
-      <h2 className="text-lg font-bold">New Transaction</h2>
+    <form onSubmit={handleSubmit} className="bg-white p-4 flex rounded shadow space-x-4">
 
       {error && <p className="text-red-500">{error}</p>}
 
@@ -80,7 +79,7 @@ export const NewTransactionForm: React.FC<Props> = ({ userA, userB, onTransactio
       <button
         type="submit"
         disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-blue-600 text-white px-4  rounded hover:bg-blue-700"
       >
         {loading ? "Sending..." : "Send"}
       </button>

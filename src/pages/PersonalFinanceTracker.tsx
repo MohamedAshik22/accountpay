@@ -194,21 +194,22 @@ const IncomeExpense: React.FC = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-4 bg-gray-100 rounded-lg shadow-md flex flex-col">
-      <div className="page-container flex flex-col space-y-4">
+    <div className='min-h-screen bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100'>
+      <div className="max-w-lg  mx-auto p-4 bg-gray-100 rounded-lg shadow-md flex flex-col">
+        <div className="page-container flex flex-col space-y-4">
 
-        {/* HEADER SECTION */}
-        <div className="header-section bg-zinc-200 p-4 rounded-t-lg shadow-sm">
-          <div className="flex items-center justify-between">
-            {userCreatedDate && (
-              <MonthYearSelector
-                selectedMonth={selectedMonth}
-                selectedYear={selectedYear}
-                setSelectedMonth={setSelectedMonth}
-                setSelectedYear={setSelectedYear}
-                userCreatedDate={userCreatedDate}
-              />
-            )}
+          {/* HEADER SECTION */}
+          <div className="header-section bg-zinc-200 p-4 rounded-t-lg shadow-sm">
+            <div className="flex items-center justify-between">
+              {userCreatedDate && (
+                <MonthYearSelector
+                  selectedMonth={selectedMonth}
+                  selectedYear={selectedYear}
+                  setSelectedMonth={setSelectedMonth}
+                  setSelectedYear={setSelectedYear}
+                  userCreatedDate={userCreatedDate}
+                />
+              )}
               <h2 className="text-xl font-bold">
                 Balance:{" "}
                 <span className={summary.netBalance >= 0 ? "text-green-600" : "text-red-600"}>
@@ -216,134 +217,134 @@ const IncomeExpense: React.FC = () => {
                 </span>
               </h2>
               <Link to="/" className="text-blue-500 hover:underline">Home</Link>
-          </div>
-        </div>
-
-        <div className="summary-section bg-zinc-100 p-2 border-t border-zinc-200 shadow-inner">
-          <div className="flex justify-between">
-            <div className="text-green-700 bg-green-100 p-2 rounded flex-1 mr-2">
-              <span className="font-semibold block mb-1">
-                Total Income ₹{summary.income.toFixed(2)}
-              </span>
-            </div>
-            <div className="text-red-700 bg-red-100 p-2 rounded flex-1 ml-2">
-              <span className="font-semibold block mb-1">
-                Total Expenses ₹{summary.expense.toFixed(2)}
-              </span>
             </div>
           </div>
-        </div>
 
-        {/* RECORDS LIST SECTION */}
-        <div className="records-section space-y-2 pb-20 flex flex-col w-full px-2 overflow-y-auto max-h-[calc(100vh-250px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-          {Array.isArray(incomeExpenses) &&
-            incomeExpenses
-              .filter(record => {
-                const recordDate = new Date(record.timestamp);
-                return recordDate.getMonth() === selectedMonth && recordDate.getFullYear() === selectedYear;
-              })
-              .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
-              .map((record) => (
-                <li
-                  key={record.id}
-                  className={`bg-white rounded-lg shadow-md p-3 flex items-center space-x-3 w-fit 
+          <div className="summary-section bg-zinc-100 p-2 border-t border-zinc-200 shadow-inner">
+            <div className="flex justify-between">
+              <div className="text-green-700 bg-green-100 p-2 rounded flex-1 mr-2">
+                <span className="font-semibold block mb-1">
+                  Total Income ₹{summary.income.toFixed(2)}
+                </span>
+              </div>
+              <div className="text-red-700 bg-red-100 p-2 rounded flex-1 ml-2">
+                <span className="font-semibold block mb-1">
+                  Total Expenses ₹{summary.expense.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* RECORDS LIST SECTION */}
+          <div className="records-section space-y-2 pb-20 flex flex-col w-full px-2 overflow-y-auto max-h-[calc(100vh-250px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            {Array.isArray(incomeExpenses) &&
+              incomeExpenses
+                .filter(record => {
+                  const recordDate = new Date(record.timestamp);
+                  return recordDate.getMonth() === selectedMonth && recordDate.getFullYear() === selectedYear;
+                })
+                .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+                .map((record) => (
+                  <li
+                    key={record.id}
+                    className={`bg-white rounded-lg shadow-md p-3 flex items-center space-x-3 w-fit 
             ${record.type === "income" ? "self-start justify-start" : "self-end justify-end"}
           `}
+                  >
+                    {editingRecord && editingRecord.id === record.id ? (
+                      <EditRecordForm
+                        editingRecord={editingRecord}
+                        setEditingRecord={setEditingRecord}
+                        handleEdit={handleEdit}
+                      />
+                    ) : (
+                      <div className="flex w-full justify-between items-center">
+                        <div className={`flex-grow ${record.type === "income" ? "text-left" : "text-right"}`}>
+                          <span className={`text-lg font-bold ${record.type === "income" ? "text-green-600" : "text-red-600"}`}>
+                            ₹{record.amount.toFixed(2)}
+                          </span>
+                          <p className="text-gray-600 text-sm">{record.description}</p>
+                          <p className="text-gray-600 text-sm">{new Date(record.timestamp).toLocaleString()}</p>
+                        </div>
+                        <div className="relative ml-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveOptionsId(prevId => prevId === record.id ? null : record.id);
+                            }}
+                            className="text-gray-500 hover:bg-gray-100 p-1 rounded"
+                          >
+                            <MoreVertical className="h-5 w-5" />
+                          </button>
+                          {activeOptionsId === record.id && (
+                            <div className="absolute right-0 top-full z-10 bg-white border rounded shadow-lg options-menu mt-1">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingRecord(record);
+                                  setActiveOptionsId(null);
+                                }}
+                                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                              >
+                                Edit
+                              </button>
+                              <DeleteConfirmation onDelete={() => handleDelete(record.id)} />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </li>
+                ))}
+          </div>
+
+          {/* ADD BUTTON SECTION - Appears AFTER records list, not floating */}
+          <div className="absolute bottom-0 left-0 right-0  p-4 bg-white shadow-top mt-4">
+            {selectedMonth === new Date().getMonth() && selectedYear === new Date().getFullYear() && (
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={() => {
+                    setNewRecordType('income');
+                    setIsAddModalOpen(true);
+                  }}
+                  className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg"
                 >
-                  {editingRecord && editingRecord.id === record.id ? (
-                    <EditRecordForm
-                      editingRecord={editingRecord}
-                      setEditingRecord={setEditingRecord}
-                      handleEdit={handleEdit}
-                    />
-                  ) : (
-                    <div className="flex w-full justify-between items-center">
-                      <div className={`flex-grow ${record.type === "income" ? "text-left" : "text-right"}`}>
-                        <span className={`text-lg font-bold ${record.type === "income" ? "text-green-600" : "text-red-600"}`}>
-                          ₹{record.amount.toFixed(2)}
-                        </span>
-                        <p className="text-gray-600 text-sm">{record.description}</p>
-                        <p className="text-gray-600 text-sm">{new Date(record.timestamp).toLocaleString()}</p>
-                      </div>
-                      <div className="relative ml-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActiveOptionsId(prevId => prevId === record.id ? null : record.id);
-                          }}
-                          className="text-gray-500 hover:bg-gray-100 p-1 rounded"
-                        >
-                          <MoreVertical className="h-5 w-5" />
-                        </button>
-                        {activeOptionsId === record.id && (
-                          <div className="absolute right-0 top-full z-10 bg-white border rounded shadow-lg options-menu mt-1">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setEditingRecord(record);
-                                setActiveOptionsId(null);
-                              }}
-                              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                            >
-                              Edit
-                            </button>
-                            <DeleteConfirmation onDelete={() => handleDelete(record.id)} />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </li>
-              ))}
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add Income
+                </button>
+                <button
+                  onClick={() => {
+                    setNewRecordType('expense');
+                    setIsAddModalOpen(true);
+                  }}
+                  className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add Expense
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* ADD BUTTON SECTION - Appears AFTER records list, not floating */}
-        <div className="absolute bottom-0 left-0 right-0  p-4 bg-white shadow-top mt-4">
-          {selectedMonth === new Date().getMonth() && selectedYear === new Date().getFullYear() && (
-            <div className="flex justify-center space-x-4">
-              <button
-                onClick={() => {
-                  setNewRecordType('income');
-                  setIsAddModalOpen(true);
-                }}
-                className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Add Income
-              </button>
-              <button
-                onClick={() => {
-                  setNewRecordType('expense');
-                  setIsAddModalOpen(true);
-                }}
-                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Add Expense
-              </button>
-            </div>
-          )}
-        </div>
+        {/* Add Record Modal */}
+        {isAddModalOpen && (
+          <AddRecordModal
+            isOpen={isAddModalOpen}
+            onClose={() => setIsAddModalOpen(false)}
+            onAdd={handleAdd}
+            newRecordType={newRecordType}
+            newRecordAmount={newRecordAmount}
+            setNewRecordAmount={setNewRecordAmount}
+            newRecordDescription={newRecordDescription}
+            setNewRecordDescription={setNewRecordDescription}
+          />
+        )}
       </div>
-
-      {/* Add Record Modal */}
-      {isAddModalOpen && (
-        <AddRecordModal
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          onAdd={handleAdd}
-          newRecordType={newRecordType}
-          newRecordAmount={newRecordAmount}
-          setNewRecordAmount={setNewRecordAmount}
-          newRecordDescription={newRecordDescription}
-          setNewRecordDescription={setNewRecordDescription}
-        />
-      )}
-
     </div>
   );
 };

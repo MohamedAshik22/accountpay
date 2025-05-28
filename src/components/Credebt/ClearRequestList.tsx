@@ -35,7 +35,6 @@ export const ClearRequestList: React.FC<ClearRequestProps> = ({ senderId, receiv
       if (response.data) {
         const data = response.data;
 
-        // Normalize to camelCase
         const normalized: ClearRequest = {
           id: data.ID,
           fromUser: data.from_user,
@@ -77,31 +76,27 @@ export const ClearRequestList: React.FC<ClearRequestProps> = ({ senderId, receiv
 
   const isReceiver = request?.toUser === currentUserId;
 
+  // If still loading or no request, render nothing
+  if (loading || !request) return null;
+
   return (
-    <div className="border rounded-xl p-4 shadow bg-yellow-50 space-y-3">
-      <h2 className="text-xl font-semibold">Clear Request</h2>
-      {loading ? (
-        <p className="text-gray-500">Loading...</p>
-      ) : !request ? (
-        <p className="text-gray-500">No pending clear request.</p>
-      ) : (
-        <div className="p-3 border rounded bg-white flex justify-between items-center">
-          <div>
-            <p className="text-md">Amount: ₹{request.amount}</p>
-            <p className="text-sm text-gray-500">
-              {new Date(request.createdAt).toLocaleString()}
-            </p>
-          </div>
-          {isReceiver && (
-            <button
-              onClick={handleAccept}
-              className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
-            >
-              Approve
-            </button>
-          )}
+    <div className="border rounded-xl p-4 shadow bg-cyan-100 space-y-3">
+      <div className=" rounded bg-cyan-100 flex justify-between items-center">
+        <div>
+          <p className="text-md">Amount: ₹{request.amount}</p>
+          <p className="text-sm text-gray-500">
+            {new Date(request.createdAt).toLocaleString()}
+          </p>
         </div>
-      )}
+        {isReceiver && (
+          <button
+            onClick={handleAccept}
+            className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
+          >
+            Approve
+          </button>
+        )}
+      </div>
     </div>
   );
 };

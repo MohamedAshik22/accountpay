@@ -16,31 +16,33 @@ interface Props {
 
 export const TransactionList: React.FC<Props> = ({ transactions = [], userA }) => {
   return (
-    <div className="border rounded-xl p-4 space-y-3 shadow-md bg-white">
-      <h2 className="text-xl font-bold mb-2">Transactions</h2>
+    <div className="space-y-3 bg-white">
       {transactions.length === 0 ? (
         <p className="text-gray-500">No transactions found.</p>
       ) : (
         transactions.map((tx) => {
           const isSender = tx.from === userA;
+          const isClearAccepted = tx.message === "Clear request accepted";
 
           return (
             <div
               key={tx.id}
-              className={`flex ${isSender ? "justify-end" : "justify-start"}`}
+              className={`flex ${isClearAccepted ? "w-full justify-center":isSender ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-xs w-fit p-3 rounded-lg shadow-md border ${
-                  isSender ? "bg-red-50 text-red-700" : "bg-green-50 text-green-700"
+                className={` p-3 rounded-lg shadow-md border ${
+                  isClearAccepted
+                    ? "bg-purple-100 text-purple-700 flex gap-4 items-center" : isSender ? "bg-red-50 text-red-700" : "bg-green-50 text-green-700"
                 }`}
               >
-                <p className="font-semibold">{tx.message || "(No message)"}</p>
+                 <p className="font-bold text-right">
+                  {isSender ? `₹${tx.amount}` : `₹${tx.amount}`}
+                </p>
+                <p className="font-semibold text-right">{tx.message || "(No message)"}</p>
                 <p className="text-sm text-gray-500">
                   {new Date(tx.CreatedAt).toLocaleString()}
                 </p>
-                <p className="font-bold mt-1 text-right">
-                  {isSender ? `₹${tx.amount}` : `₹${tx.amount}`}
-                </p>
+               
               </div>
             </div>
           );

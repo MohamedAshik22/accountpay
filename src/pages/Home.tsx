@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LogOut from '../components/LogOut';
 import AnalyticsDashboard from '../components/AnalyticsDashboard';
 import LastFiveDaysSummary from '../components/LastSummary';
 import { User } from 'lucide-react';
 import UserList from '../components/UserList';
+import UserByPhoneSearch from '../components/Credebt/UserByPhoneSearch';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -29,6 +30,14 @@ const Home: React.FC = () => {
     const [records, setRecords] = useState<IncomeExpense[]>([]);
     const [incomeExpenses, setIncomeExpenses] = useState<IncomeExpense[]>([]);
     const [firstName, setFirstName] = useState('');
+
+    const navigate = useNavigate();
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+        }
+    }, [navigate]);
 
     // Fetch user details
     useEffect(() => {
@@ -79,16 +88,19 @@ const Home: React.FC = () => {
     }, []); // Empty dependency array ensures this runs once when the component mounts
 
     return (
-        <div className="flex flex-col items-center mt-10 space-y-6">
-            <h1 className="text-2xl font-bold">Welcome {firstName}</h1>
+        <div className='min h-screen bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100'>
+            <div className="flex flex-col items-center pt-20 space-y-6 ">
+                <h1 className="text-2xl font-bold">Welcome {firstName}</h1>
 
-            <div className="w-1/2 flex space-x-4">
-            <UserList />
-                {/* Pass the records to both AnalyticsDashboard and LastFiveDaysSummary components */}
-                <AnalyticsDashboard records={incomeExpenses} />
-                <LastFiveDaysSummary records={records} /> {/* Updated to use the `records` state */}
+                <div className="space-x-4">
+                    <UserByPhoneSearch />
+
+                    <UserList />
+
+                    {/* <AnalyticsDashboard records={incomeExpenses} /> */}
+                    {/* <LastFiveDaysSummary records={records} /> Updated to use the `records` state */}
+                </div>
             </div>
-            <LogOut />
         </div>
     );
 };

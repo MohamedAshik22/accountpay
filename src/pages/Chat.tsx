@@ -67,24 +67,29 @@ const ChatPage: React.FC = () => {
     if (!userA || !userB) return <p className="text-center mt-10">Invalid users.</p>;
 
     return (
-        <div className="p-6 max-w-4xl mx-auto space-y-6">
-            <h1 className="text-2xl font-bold"> Transactions with {userBInfo?.firstName || "User"}</h1>
+        <div className="bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100">
+        <div className="p-6 bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 max-w-4xl mx-auto h-[90vh] flex flex-col space-y-4">
+        {/* <div className="min-h-screen bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 p-6 flex flex-col"> */}
+            <h1 className="text-2xl font-bold">{userBInfo?.firstName}</h1>
 
             {error && <p className="text-red-500">{error}</p>}
-            <div className="flex">
+            <div className=" flex justify-between bg-gray-100">
                 <BalanceCard netBalance={balance} />
                 {balance > 0 && (
                     <ClearRequestPanel userA={userA} userB={userB} netBalance={balance} onClearSuccess={fetchData} />
                 )}
+            </div>
 
                 <ClearRequestList
                     senderId={userB}
                     receiverId={userA}
                     onAccept={handleAccept}
                 />
-            </div>
+                  <div className="flex-1 overflow-y-auto  rounded-xl p-2 bg-white shadow">
             <TransactionList transactions={combinedTransactions} userA={userA} />
+            </div>
             <NewTransactionForm userA={userA} userB={userB} onTransactionCreated={fetchData} />
+        </div>
         </div>
     );
 };

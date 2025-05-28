@@ -23,14 +23,19 @@ const Profile: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [imageError, setImageError] = useState<boolean>(false);
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [firstNameInput, setFirstNameInput] = useState('');
+  const [lastNameInput, setLastNameInput] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          setError('No token found');
+          setError('No token found.');
           setLoading(false);
           return;
         }
@@ -39,28 +44,28 @@ const Profile: React.FC = () => {
         const userId = decoded.userId || decoded.id || decoded.user_id;
 
         if (!userId) {
-          setError('Invalid user ID');
+          setError('Invalid user ID.');
           setLoading(false);
           return;
         }
 
         const response = await axios.get(`${apiUrl}/users/${userId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          maxContentLength: Infinity,
-          maxBodyLength: Infinity
+          headers: { Authorization: `Bearer ${token}` },
         });
+
         setProfile(response.data);
-        setLoading(false);
+        // Initialize inputs
+        setFirstNameInput(response.data.firstName || '');
+        setLastNameInput(response.data.lastName || '');
       } catch (err: any) {
         if (err.response) {
-          setError(err.response.data.error || 'Failed to fetch profile');
+          setError(err.response.data.error || 'Failed to fetch profile.');
         } else if (err.request) {
-          setError('No response from server');
+          setError('No response from server.');
         } else {
-          setError(err.message || 'Error setting up request');
+          setError(err.message || 'Error setting up request.');
         }
+      } finally {
         setLoading(false);
       }
     };
@@ -68,64 +73,176 @@ const Profile: React.FC = () => {
     fetchProfile();
   }, []);
 
-  const truncateBase64Image = (base64Image: string, maxLength = 10000) => {
-    if (base64Image && base64Image.length > maxLength) {
-      return base64Image.substring(0, maxLength) + '...';
-    }
-    return base64Image;
+  const handleEditClick = () => {
+    setIsEditingName(true);
+    setSaveError(null);
   };
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-full">
-      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-blue-500"></div>
-    </div>
-  );
+  const handleCancel = () => {
+    setIsEditingName(false);
+    if (profile) {
+      setFirstNameInput(profile.firstName || '');
+      setLastNameInput(profile.lastName || '');
+    }
+    setSaveError(null);
+  };
 
-  if (error) return (
-    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-      {error}
-    </div>
-  );
+  const handleSave = async () => {
+    if (!profile) return;
 
-  if (!profile) return (
-    <div className="text-center text-gray-500">No profile data available</div>
-  );
+    if (!firstNameInput.trim() || !lastNameInput.trim()) {
+      setSaveError('First and last name cannot be empty.');
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found.');
+
+      const response = await axios.put(
+        `${apiUrl}/users/${profile.id}`,
+        {
+          firstName: firstNameInput.trim(),
+          lastName: lastNameInput.trim(),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setProfile(response.data);
+      setIsEditingName(false);
+    } catch (err: any) {
+      setSaveError(err.response?.data?.error || 'Failed to update profile.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div
+          className="bg-red-50 border border-red-300 text-red-700 px-6 py-4 rounded-lg shadow-md"
+          role="alert"
+        >
+          {error}
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100 text-gray-500 text-lg font-light">
+        No profile data available.
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-      <div className="px-6 py-4">
-        {profile.imageUrl && !imageError ? (
-          <img 
-            src={truncateBase64Image(profile.imageUrl)} 
-            alt={`${profile.firstName || 'User'} profile`} 
-            className="w-32 h-32 rounded-full mx-auto object-cover mb-4 border-4 border-blue-500"
-            onError={() => {
-              setImageError(true);
-            }}
-          />
-        ) : (
-          <div className="w-32 h-32 rounded-full mx-auto bg-gray-300 flex items-center justify-center text-gray-600 mb-4">
-            <span className="text-2xl">
-              {profile.firstName ? profile.firstName[0].toUpperCase() : 'U'}
-            </span>
-          </div>
-        )}
+    <div className="flex justify-center items-start min-h-screen bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 pt-20 p-6">
+      <div className="bg-white max-w-md w-full rounded-3xl shadow-2xl p-8 flex flex-col items-center">
+        {/* Profile Avatar */}
+        <div className="relative w-28 h-28 rounded-full shadow-xl overflow-hidden mb-6">
+          {profile.imageUrl ? (
+            <img
+              src={profile.imageUrl}
+              alt={`${profile.firstName} ${profile.lastName}`}
+              className="object-cover w-full h-full"
+            />
+          ) : (
+            <div className="bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center w-full h-full">
+              <span className="text-6xl font-bold text-white select-none">
+                {profile.firstName ? profile.firstName[0].toUpperCase() : 'U'}
+              </span>
+            </div>
+          )}
+        </div>
 
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            {profile.firstName && profile.lastName 
-              ? `${profile.firstName} ${profile.lastName}` 
-              : 'User Profile'}
-          </h2>
-          
-          <div className="text-gray-600 space-y-2">
-            <p>
-              <span className="font-medium">Phone:</span> {profile.phone}
-            </p>
-            <p>
-              <span className="font-medium">Email:</span> {profile.email}
-            </p>
+        {/* Name and Edit */}
+        <div className="flex flex-col items-center w-full">
+          {!isEditingName ? (
+            <div className="flex items-center space-x-3">
+              <h1 className="text-3xl font-extrabold text-gray-900 tracking-wide">
+                {profile.firstName && profile.lastName
+                  ? `${profile.firstName} ${profile.lastName}`
+                  : 'User Profile'}
+              </h1>
+              <button
+                onClick={handleEditClick}
+                aria-label="Edit name"
+                className="text-indigo-600 hover:text-indigo-800 focus:outline-none"
+              >
+                ✏️
+              </button>
+            </div>
+          ) : (
+            <div className="flex space-x-3 items-center">
+              <input
+                type="text"
+                value={firstNameInput}
+                onChange={(e) => setFirstNameInput(e.target.value)}
+                placeholder="First name"
+                className="border rounded-md px-3 py-1 text-lg w-32"
+              />
+              <input
+                type="text"
+                value={lastNameInput}
+                onChange={(e) => setLastNameInput(e.target.value)}
+                placeholder="Last name"
+                className="border rounded-md px-3 py-1 text-lg w-32"
+              />
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="bg-indigo-600 text-white px-4 py-1 rounded-md hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : 'Save'}
+              </button>
+              <button
+                onClick={handleCancel}
+                disabled={saving}
+                className="px-4 py-1 rounded-md border hover:bg-gray-100 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+          {saveError && (
+            <p className="text-red-600 mt-2 text-sm font-medium">{saveError}</p>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className="w-16 border-b-4 border-pink-400 rounded-full my-6"></div>
+
+        {/* Contact Info */}
+        <div className="w-full space-y-5">
+          <div className="flex justify-between px-6">
+            <span className="text-gray-600 font-semibold tracking-wide">Phone:</span>
+            <span className="text-gray-800 font-medium">{profile.phone}</span>
           </div>
+          <div className="flex justify-between px-6">
+            <span className="text-gray-600 font-semibold tracking-wide">Email:</span>
+            <span className="text-gray-800 font-medium break-words">{profile.email}</span>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-10 text-sm text-gray-400 italic select-none">
+          Accountpay.in
         </div>
       </div>
     </div>

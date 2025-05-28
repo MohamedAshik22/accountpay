@@ -1,3 +1,4 @@
+import { LogOutIcon } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,9 +16,9 @@ const LogOut: React.FC = () => {
   return (
     <button 
       onClick={handleLogout} 
-      className="logout-button bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
+      className="bg-blue-100 text-red-500 font-bold py-2 px-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
     >
-      Logout
+      <LogOutIcon className="w-5 h-5 mr-2" />
     </button>
   );
 };

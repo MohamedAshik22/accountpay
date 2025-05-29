@@ -73,7 +73,7 @@ const ChatPage: React.FC = () => {
             <h1 className="text-2xl font-bold">{userBInfo?.firstName}</h1>
 
             {error && <p className="text-red-500">{error}</p>}
-            <div className=" flex justify-between bg-gray-100">
+            <div className=" flex justify-between bg-gray-100 items-center">
                 <BalanceCard netBalance={balance} />
                 {balance > 0 && (
                     <ClearRequestPanel userA={userA} userB={userB} netBalance={balance} onClearSuccess={fetchData} />

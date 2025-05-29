@@ -194,8 +194,8 @@ const IncomeExpense: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100'>
-      <div className="max-w-lg  mx-auto p-4 bg-gray-100 rounded-lg shadow-md flex flex-col">
+    <div className='h-[90vh] bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100'>
+      <div className="max-w-lg  mx-auto px-2 bg-gray-100 rounded-lg shadow-md flex flex-col">
         <div className="page-container flex flex-col space-y-4">
 
           {/* HEADER SECTION */}

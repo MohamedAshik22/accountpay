@@ -11,7 +11,7 @@ interface Props {
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const ClearRequestPanel: React.FC<Props> = ({ userA, userB, netBalance, onClearSuccess }) => {
-    const [amount, setAmount] = useState<number>(0);
+    const [amount, setAmount] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showForm, setShowForm] = useState(false); // track form visibility
@@ -28,12 +28,14 @@ export const ClearRequestPanel: React.FC<Props> = ({ userA, userB, netBalance, o
             setLoading(true);
             setError(null);
 
+            const amountValue = parseFloat(amount);
+
             await axios.post(
                 `${apiUrl}/transactions/clear/request`,
                 {
                     from_user: userA,
                     to_user: userB,
-                    amount,
+                    amount: amountValue,
                 },
                 {
                     headers: {
@@ -43,8 +45,8 @@ export const ClearRequestPanel: React.FC<Props> = ({ userA, userB, netBalance, o
             );
 
             onClearSuccess();
-            setShowForm(false); // hide form after sending
-            setAmount(0);       // reset input
+            setShowForm(false);
+            setAmount("");
         } catch (err: any) {
             setError(err.response?.data?.error || "Failed to send clear request.");
         } finally {
@@ -72,7 +74,7 @@ export const ClearRequestPanel: React.FC<Props> = ({ userA, userB, netBalance, o
                                 placeholder="Enter amount"
                                 className="border p-2 rounded-lg"
                                 value={amount}
-                                onChange={(e) => setAmount(parseFloat(e.target.value))}
+                                onChange={(e) => setAmount(e.target.value)}
                             />
                             <div className="flex gap-2">
                                 <button

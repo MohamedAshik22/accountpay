@@ -28,7 +28,7 @@ const RegisterPage: React.FC = () => {
       });
 
       localStorage.setItem('token', res.data.token);
-      navigate('/');
+      navigate('/login');
     } catch (err) {
       console.error(err);
       setError('Registration failed. Try again.');
@@ -36,7 +36,7 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100">
       <RegisterForm
         firstName={firstName}
         lastName={lastName}

@@ -89,16 +89,16 @@ const Home: React.FC = () => {
 
     return (
         <div className='min h-screen bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100'>
-            <div className="flex flex-col items-center pt-20 space-y-6 ">
+            <div className="flex flex-col items-center pt-20 ">
                 <h1 className="text-2xl font-bold">Welcome {firstName}</h1>
 
-                <div className="space-x-4">
+                <div className="space-x-4 space-y-6 ">
                     <UserByPhoneSearch />
 
-                    <UserList />
+                    {/* <UserList /> */}
 
                     {/* <AnalyticsDashboard records={incomeExpenses} /> */}
-                    {/* <LastFiveDaysSummary records={records} /> Updated to use the `records` state */}
+                    <LastFiveDaysSummary records={records} /> 
                 </div>
             </div>
         </div>

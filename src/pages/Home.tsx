@@ -52,8 +52,12 @@ const Home: React.FC = () => {
                 });
 
                 setFirstName(res.data.firstName);
-            } catch (err) {
+            } catch (err:any) {
                 console.error('Failed to fetch user details', err);
+                if (err.response?.status === 401) {
+                    localStorage.clear();
+                    navigate('/login');
+                }
             }
         };
 

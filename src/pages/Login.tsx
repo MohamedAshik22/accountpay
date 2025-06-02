@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/Login';
-import {jwtDecode} from 'jwt-decode'; // Correct named import for jwt-decode
+import { jwtDecode } from 'jwt-decode'; // Correct named import for jwt-decode
 
 interface JwtPayload {
   userId: number;
@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
 
       // Decode the token to extract user details
       const decodedToken = jwtDecode<JwtPayload>(token); // Decode with JwtPayload type
-      console.log('Decoded Token:', decodedToken);
+
       // Assuming the user ID is stored under 'userId' or 'user_id'
       const userId = decodedToken.userId || decodedToken.user_id || decodedToken.id;
       const firstName = decodedToken.firstName || '';
@@ -46,6 +46,15 @@ const LoginPage: React.FC = () => {
       // Save the userId in localStorage
       localStorage.setItem('userId', userId.toString());
       localStorage.setItem('firstName', firstName);
+
+      // 🔍 Fetch user's profile to get created_at
+      const profileRes = await axios.get(`${apiUrl}/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const createdAt = profileRes.data?.created_at;
+      if (createdAt) {
+        localStorage.setItem('userCreatedDate', createdAt);
+      }
 
       // Navigate after successful login
       navigate('/');

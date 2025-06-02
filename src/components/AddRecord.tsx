@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface AddRecordModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (amount: string, description: string) => void;
+  onAdd: (amount: string, description: string) => Promise<void> | void;
   newRecordType: 'income' | 'expense';
   newRecordAmount: string;
   setNewRecordAmount: React.Dispatch<React.SetStateAction<string>>;
@@ -21,7 +21,19 @@ const AddRecordModal: React.FC<AddRecordModalProps> = ({
   newRecordDescription,
   setNewRecordDescription,
 }) => {
+  const [isAdding, setIsAdding] = useState(false);
+
   if (!isOpen) return null;
+
+  const handleAdd = async () => {
+    setIsAdding(true);
+    try {
+      await onAdd(newRecordAmount, newRecordDescription);
+      // Optionally clear fields or close modal here
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-gray-400 bg-opacity-50 flex items-center justify-center z-50">
@@ -48,14 +60,16 @@ const AddRecordModal: React.FC<AddRecordModalProps> = ({
           <button
             onClick={onClose}
             className="bg-gray-300 text-black px-4 py-2 rounded"
+            disabled={isAdding}
           >
             Cancel
           </button>
           <button
-            onClick={() => onAdd(newRecordAmount, newRecordDescription)}
-            className={`px-4 py-2 rounded ${newRecordType === 'income' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}
+            onClick={handleAdd}
+            disabled={isAdding}
+            className={`px-4 py-2 rounded ${newRecordType === 'income' ? 'bg-green-600' : 'bg-red-600'} text-white`}
           >
-            Add
+            {isAdding ? 'Adding...' : 'Add'}
           </button>
         </div>
       </div>

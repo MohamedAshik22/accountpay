@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import { FiPhone } from 'react-icons/fi'; // Phone icon
+import { Link, useNavigate } from 'react-router-dom';
+import { FiPhone } from 'react-icons/fi';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -12,30 +12,26 @@ interface User {
   phone: string;
 }
 
-
 const UserByPhoneSearch: React.FC = () => {
   const [phoneQuery, setPhoneQuery] = useState('');
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [showSearch, setShowSearch] = useState(false); // toggle input visibility
+  const [showSearch, setShowSearch] = useState(false);
+  const navigate = useNavigate();
+
   const loggedInUserId = localStorage.getItem('userId');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    if (!showSearch) {
-      setUser(null);
-      setError(null);
-      setPhoneQuery('');
-      return;
-    }
-
     const fetchUser = async () => {
+      if (!phoneQuery.trim() || !token) return;
+
       try {
-        const token = localStorage.getItem('token');
         const response = await axios.get(`${apiUrl}/users/search?phone=${phoneQuery}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (response.data && response.data.id) {
+        if (response.data?.id) {
           setUser(response.data);
           setError(null);
         } else {
@@ -43,30 +39,62 @@ const UserByPhoneSearch: React.FC = () => {
           setError('No user found.');
         }
       } catch (err) {
-        console.error(err);
+        console.error('Error searching for user:', err);
         setUser(null);
         setError('Error searching for user.');
       }
     };
 
-    fetchUser();
-  }, [phoneQuery, showSearch]);
+    if (showSearch) fetchUser();
+    else {
+      setPhoneQuery('');
+      setUser(null);
+      setError(null);
+    }
+  }, [phoneQuery, showSearch, token]);
+
+  const handleAddRecentUser = async (contactUserId: string) => {
+    if (!loggedInUserId || !token) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const payload = { contactUserId };
+
+      const response = await axios.post(
+        `${apiUrl}/users/${loggedInUserId}/recent-users`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error response:", error.response?.data);
+      } else {
+        console.error("Unknown error occurred:", error);
+      }
+    }
+  };
 
   return (
     <div className="relative mt-6 w-full max-w-md">
-      {/* Phone Icon button */}
       <button
         onClick={() => setShowSearch(!showSearch)}
-        className="p-2 rounded bg-green-100 border transition"
+        className="p-2 rounded bg-green-100 transition flex flex-col items-center gap-2"
         aria-label="Toggle phone search"
       >
         <FiPhone size={20} />
-        Search by Phone
+        Pay Phone Number
       </button>
 
-      {/* Search input and results */}
       {showSearch && (
-        <div className="mt-2 p-4  rounded shadow bg-white">
+        <div className="mt-2 p-4 rounded shadow bg-white">
           <input
             type="text"
             placeholder="Enter full phone number"
@@ -78,11 +106,14 @@ const UserByPhoneSearch: React.FC = () => {
           {error && <p className="text-red-500 mt-2">{error}</p>}
 
           {user && (
-            <div className="ml-4 rounded bg-gray-50">
+            <div className="ml-4 rounded bg-gray-50 p-2">
               <Link
                 to={`/credebt/${loggedInUserId}/${user.id}`}
-                className="inline-block mt-2 text-red-600"
-                onClick={() => setShowSearch(false)} 
+                className="inline-block text-blue-600 hover:underline"
+                onClick={() => {
+                  handleAddRecentUser(user.id);
+                  setShowSearch(false);
+                }}
               >
                 {user.firstName} {user.lastName}
               </Link>

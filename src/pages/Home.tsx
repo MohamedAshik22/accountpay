@@ -7,6 +7,7 @@ import LastFiveDaysSummary from '../components/LastSummary';
 import { User } from 'lucide-react';
 import UserList from '../components/UserList';
 import UserByPhoneSearch from '../components/Credebt/UserByPhoneSearch';
+import RecentUsers from '../components/RecentUsers';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -30,7 +31,8 @@ const Home: React.FC = () => {
     const [records, setRecords] = useState<IncomeExpense[]>([]);
     const [incomeExpenses, setIncomeExpenses] = useState<IncomeExpense[]>([]);
     const [firstName, setFirstName] = useState('');
-
+    const userId = localStorage.getItem('userId') || '';
+    
     const navigate = useNavigate();
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -98,7 +100,7 @@ const Home: React.FC = () => {
 
                 <div className="space-x-4 space-y-6 ">
                     <UserByPhoneSearch />
-
+                    <RecentUsers loggedInUserId={userId} apiBaseUrl={apiUrl} />
                     {/* <UserList /> */}
 
                     {/* <AnalyticsDashboard records={incomeExpenses} /> */}

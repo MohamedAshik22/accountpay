@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^7.3.0",
+    "@capacitor/cli": "^7.3.0",
+    "@capacitor/core": "^7.3.0",
     "@headlessui/react": "^2.2.2",
     "@tailwindcss/vite": "^4.1.5",
     "@types/jwt-decode": "^3.1.0",

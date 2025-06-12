@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 
 interface IncomeExpense {
@@ -22,10 +22,19 @@ const EditRecordForm: React.FC<EditRecordFormProps> = ({
   setEditingRecord,
   handleEdit
 }) => {
+  const amountInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editingRecord && amountInputRef.current) {
+      amountInputRef.current.focus();
+    }
+  }, [editingRecord]);
+
   return (
     <div className="flex flex-col w-full">
       <input
         type="number"
+        ref={amountInputRef}
         value={editingRecord.amount}
         onChange={(e) => setEditingRecord({
           ...editingRecord,

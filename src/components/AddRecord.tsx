@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface AddRecordModalProps {
   isOpen: boolean;
@@ -22,7 +22,14 @@ const AddRecordModal: React.FC<AddRecordModalProps> = ({
   setNewRecordDescription,
 }) => {
   const [isAdding, setIsAdding] = useState(false);
+  const amountInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (isOpen && amountInputRef.current) {
+      amountInputRef.current.focus();
+    }
+  }, [isOpen]);
+  
   if (!isOpen) return null;
 
   const handleAdd = async () => {
@@ -43,6 +50,7 @@ const AddRecordModal: React.FC<AddRecordModalProps> = ({
         </h2>
         <input
           type="number"
+          ref={amountInputRef}
           placeholder="Amount"
           value={newRecordAmount}
           onChange={(e) => setNewRecordAmount(e.target.value)}

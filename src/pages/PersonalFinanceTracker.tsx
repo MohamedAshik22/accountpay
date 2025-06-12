@@ -196,7 +196,7 @@ const IncomeExpense: React.FC = () => {
   return (
     <div className='h-[90vh] bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100'>
       <div className="max-w-lg  mx-auto px-2 bg-gray-100 rounded-lg shadow-md flex flex-col">
-        <div className="page-container flex flex-col space-y-4">
+        <div className="page-container flex flex-col space-y-2">
 
           {/* HEADER SECTION */}
           <div className="header-section bg-zinc-200 p-4 rounded-t-lg shadow-sm">
@@ -220,14 +220,14 @@ const IncomeExpense: React.FC = () => {
             </div>
           </div>
 
-          <div className="summary-section bg-zinc-100 p-2 border-t border-zinc-200 shadow-inner">
+          <div className="summary-section bg-zinc-200 px-2 ">
             <div className="flex justify-between">
-              <div className="text-green-700 bg-green-100 p-2 rounded flex-1 mr-2">
+              <div className="text-green-500 p-2 rounded flex-1 mr-2">
                 <span className="font-semibold block mb-1">
                   Total Income ₹{summary.income.toFixed(2)}
                 </span>
               </div>
-              <div className="text-red-700 bg-red-100 p-2 rounded flex-1 ml-2">
+              <div className="text-red-500 p-2 rounded flex-1 ml-2">
                 <span className="font-semibold block mb-1">
                   Total Expenses ₹{summary.expense.toFixed(2)}
                 </span>

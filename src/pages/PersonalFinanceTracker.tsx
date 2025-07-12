@@ -194,7 +194,7 @@ const IncomeExpense: React.FC = () => {
   };
 
   return (
-    <div className='h-[90vh] bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100'>
+    <div className='h-[93vh] bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100'>
       <div className="max-w-lg  mx-auto px-2 bg-gray-100 rounded-lg shadow-md flex flex-col">
         <div className="page-container flex flex-col space-y-2">
 
@@ -299,9 +299,9 @@ const IncomeExpense: React.FC = () => {
           </div>
 
           {/* ADD BUTTON SECTION - Appears AFTER records list, not floating */}
-          <div className="absolute bottom-0 left-0 right-0  p-4 bg-white shadow-top mt-4">
+          <div className="absolute bottom-0 left-0 right-0  px-4 pb-2">
             {selectedMonth === new Date().getMonth() && selectedYear === new Date().getFullYear() && (
-              <div className="flex justify-center space-x-4">
+              <div className="flex justify-center space-x-24">
                 <button
                   onClick={() => {
                     setNewRecordType('income');

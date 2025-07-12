@@ -55,7 +55,7 @@ export const NewTransactionForm: React.FC<Props> = ({ userA, userB, onTransactio
   
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 flex rounded shadow space-x-4">
+    <form onSubmit={handleSubmit} className=" p-4 flex rounded  space-x-4">
 
       {error && <p className="text-red-500">{error}</p>}
 

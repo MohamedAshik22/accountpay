@@ -67,8 +67,8 @@ const ChatPage: React.FC = () => {
     if (!userA || !userB) return <p className="text-center mt-10">Invalid users.</p>;
 
     return (
-        <div className="bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100">
-        <div className="p-6 bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 max-w-4xl mx-auto h-[90vh] flex flex-col space-y-4">
+        <div className="bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 max-h-[calc(100vh-250px)]">
+        <div className="pt-6 px-2 bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 max-w-4xl mx-auto h-[93vh] flex flex-col space-y-4">
         {/* <div className="min-h-screen bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 p-6 flex flex-col"> */}
             <h1 className="text-2xl font-bold">{userBInfo?.firstName}</h1>
 

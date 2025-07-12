@@ -79,7 +79,7 @@ const RecentUsers: React.FC<RecentUsersProps> = ({ loggedInUserId, apiBaseUrl })
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="bg-white p-4 rounded shadow max-w-md w-full">
+    <div className=" p-4 rounded  max-w-md w-full">
       <h2 className="text-xl font-semibold mb-3">Recent Users</h2>
       {recentUsers.length === 0 ? (
         <p className="text-gray-500">No recent users found.</p>
@@ -92,7 +92,7 @@ const RecentUsers: React.FC<RecentUsersProps> = ({ loggedInUserId, apiBaseUrl })
             <li
               key={user.id}
               onClick={() => handleSelectUser(user.id)}
-              className="flex flex-col items-center space-y-1 p-2 rounded hover:shadow cursor-pointer"
+              className="flex flex-col items-center space-y-1 p-2 rounded hover:shadow cursor-pointer "
               title={`${user.firstName} ${user.lastName}`}
             >
               {user.imageUrl ? (
@@ -102,11 +102,11 @@ const RecentUsers: React.FC<RecentUsersProps> = ({ loggedInUserId, apiBaseUrl })
                   className="w-16 h-16 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold text-xl">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-200 to-blue-200 flex items-center justify-center text-black font-bold text-xl">
                   {user.firstName.charAt(0)}
                 </div>
               )}
-              <span className="text-blue-600 text-center text-sm truncate w-full">
+              <span className="text-indigo-900 text-center text-sm truncate w-full">
                 {user.firstName} {user.lastName}
               </span>
             </li>

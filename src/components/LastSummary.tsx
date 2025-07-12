@@ -49,13 +49,13 @@ const LastFiveDaysSummary: React.FC<Props> = ({ records }) => {
   const summary = getLastFiveDaysSummary();
 
   return (
-    <div className="w-full max-w-lg p-6 bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+    <div className="w-full max-w-lg p-6  rounded-xl  overflow-hidden transition-transform duration-300 hover:scale-105">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Last 5 Days Summary</h2>
       <ul className="space-y-3">
         {Object.entries(summary).map(([date, { income, expense }]) => (
           <li key={date} className="grid grid-cols-2 gap-4 items-center py-2 border-b border-gray-200 last:border-none">
-            <span className="text-gray-700">{date}</span>
-            <div className="flex items-center justify-end space-x-4">
+            <span className="text-black">{date}</span>
+            <div className="flex items-center justify-between space-x-4">
               <span className="text-green-600 font-medium">₹{income.toFixed(2)}</span>
               <span className="text-red-600 font-medium">₹{expense.toFixed(2)}</span>
             </div>

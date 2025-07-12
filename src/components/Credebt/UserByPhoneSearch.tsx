@@ -86,15 +86,15 @@ const UserByPhoneSearch: React.FC = () => {
     <div className="relative mt-6 w-full max-w-md">
       <button
         onClick={() => setShowSearch(!showSearch)}
-        className="p-2 rounded bg-green-100 transition flex flex-col items-center gap-2"
+        className="p-2 rounded transition flex flex-col items-center gap-2"
         aria-label="Toggle phone search"
       >
-        <FiPhone size={20} />
-        Pay Phone Number
+        <FiPhone size={20} className='text-green-600'/>
+        <p className='text-black'>Pay Phone Number</p>
       </button>
 
       {showSearch && (
-        <div className="mt-2 p-4 rounded shadow bg-white">
+        <div className="mt-2 p-4 rounded  ">
           <input
             type="text"
             placeholder="Enter full phone number"

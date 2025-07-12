@@ -1,4 +1,14 @@
 import React from 'react';
+import {
+  ResponsiveContainer,
+  BarChart,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  Bar,
+  CartesianGrid,
+} from 'recharts';
 
 interface IncomeExpense {
   type: 'income' | 'expense';
@@ -6,62 +16,69 @@ interface IncomeExpense {
   updated_at: string; // Use 'created_at' directly to extract the date
 }
 
-interface Summary {
-  [date: string]: { income: number; expense: number };
-}
-
 interface Props {
   records: IncomeExpense[];
 }
 
 const LastFiveDaysSummary: React.FC<Props> = ({ records }) => {
-  const getLastFiveDaysSummary = (): Summary => {
+  const getLastFiveDaysSummary = () => {
     const today = new Date();
     const dates: string[] = [];
 
     // Generate dates for the last 5 days in 'YYYY-MM-DD' format
-    for (let i = 0; i < 5; i++) {
+    for (let i = 4; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
       dates.push(d.toISOString().split('T')[0]); // Date in 'YYYY-MM-DD' format
     }
 
-    const summary: Summary = {};
-    dates.forEach(date => {
-      summary[date] = { income: 0, expense: 0 };
-    });
+    const summary = dates.map(date => ({
+      date,
+      income: 0,
+      expense: 0,
+    }));
 
     // Process records
     records.forEach(item => {
-      // Extract only the 'YYYY-MM-DD' portion of the date
-      const recordDate = item.updated_at.split('T')[0]; // This extracts the date part
+      const recordDate = item.updated_at.split('T')[0];
+      const daySummary = summary.find(s => s.date === recordDate);
 
-      // Check if the record's date is in the last 5 days' dates
-      if (summary[recordDate]) {
-        if (item.type === 'income') summary[recordDate].income += item.amount;
-        else if (item.type === 'expense') summary[recordDate].expense += item.amount;
+      if (daySummary) {
+        if (item.type === 'income') daySummary.income += item.amount;
+        else if (item.type === 'expense') daySummary.expense += item.amount;
       }
     });
 
     return summary;
   };
 
-  const summary = getLastFiveDaysSummary();
+  const data = getLastFiveDaysSummary();
 
   return (
-    <div className="w-full max-w-lg p-6  rounded-xl  overflow-hidden transition-transform duration-300 hover:scale-105">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Last 5 Days Summary</h2>
-      <ul className="space-y-3">
-        {Object.entries(summary).map(([date, { income, expense }]) => (
-          <li key={date} className="grid grid-cols-2 gap-4 items-center py-2 border-b border-gray-200 last:border-none">
-            <span className="text-black">{date}</span>
-            <div className="flex items-center justify-between space-x-4">
-              <span className="text-green-600 font-medium">₹{income.toFixed(2)}</span>
-              <span className="text-red-600 font-medium">₹{expense.toFixed(2)}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className="w-full max-w-3xl p-6 rounded-xl shadow-md bg-white">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+        Last 5 Days Summary
+      </h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" interval={0} // Show all dates
+           tickFormatter={(dateStr) => {
+            const dateObj = new Date(dateStr);
+            const day = dateObj.getDate();
+            const month = dateObj.toLocaleString('default', { month: 'short' }); // 'Apr'
+            return `${day} ${month}`;
+          }}
+          tick={{ fontSize: 14 }} />
+          <YAxis />
+          <Tooltip
+            formatter={(value: number) => `₹${value.toFixed(2)}`}
+          />
+          <Legend />
+          <Bar dataKey="income" fill="#16a34a" name="Income" />
+          <Bar dataKey="expense" fill="#dc2626" name="Expense" />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };

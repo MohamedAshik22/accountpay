@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router';
 import DeleteConfirmation from '../components/Delete';
 import AddRecordModal from '../components/AddRecord';
-import { MoreVertical } from 'lucide-react';
+import { ChevronDownIcon, ChevronUpIcon, MoreVertical } from 'lucide-react';
 import MonthYearSelector from '../components/MonthYearSelector';
 import EditRecordForm from '../components/EditRecordForm';
 
@@ -25,6 +25,8 @@ const IncomeExpense: React.FC = () => {
   const [activeOptionsId, setActiveOptionsId] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [showOptions, setShowOptions] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
   // New state for adding records
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -194,12 +196,12 @@ const IncomeExpense: React.FC = () => {
   };
 
   return (
-    <div className='h-[93vh] bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100'>
-      <div className="max-w-lg  mx-auto px-2 bg-gray-100 rounded-lg shadow-md flex flex-col">
+    <div className='h-[93vh] bg-white'>
+      <div className="max-w-lg  mx-auto px-2 bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 rounded-lg shadow-md flex flex-col">
         <div className="page-container flex flex-col space-y-2">
 
           {/* HEADER SECTION */}
-          <div className="header-section bg-zinc-200 p-4 rounded-t-lg shadow-sm">
+          <div className="header-section bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 p-4 rounded-t-lg shadow-sm">
             <div className="flex items-center justify-between">
               {userCreatedDate && (
                 <MonthYearSelector
@@ -210,33 +212,48 @@ const IncomeExpense: React.FC = () => {
                   userCreatedDate={userCreatedDate}
                 />
               )}
-              <h2 className="text-xl font-bold">
-                Balance:{" "}
-                <span className={summary.netBalance >= 0 ? "text-green-600" : "text-red-600"}>
-                  ₹{summary.netBalance.toFixed(2)}
-                </span>
-              </h2>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setShowSummary(!showSummary)}
+                  className="focus:outline-none"
+                >
+                  {showSummary ? (
+                    <ChevronUpIcon className="w-5 h-5 text-gray-600" />
+                  ) : (
+                    <ChevronDownIcon className="w-5 h-5 text-gray-600" />
+                  )}
+                </button>
+                <h2 className="text-xl font-bold">
+                  Balance:{" "}
+                  <span className={summary.netBalance >= 0 ? "text-green-600" : "text-red-600"}>
+                    ₹{summary.netBalance.toFixed(2)}
+                  </span>
+                </h2>
+              </div>
               <Link to="/" className="text-blue-500 hover:underline">Home</Link>
             </div>
           </div>
 
-          <div className="summary-section bg-zinc-200 px-2 ">
-            <div className="flex justify-between">
-              <div className="text-green-500 p-2 rounded flex-1 mr-2">
-                <span className="font-semibold block mb-1">
-                  Total Income ₹{summary.income.toFixed(2)}
-                </span>
-              </div>
-              <div className="text-red-500 p-2 rounded flex-1 ml-2">
-                <span className="font-semibold block mb-1">
-                  Total Expenses ₹{summary.expense.toFixed(2)}
-                </span>
+          {showSummary && (
+            <div className="absolute top-[140px] left-0 w-full px-2 z-50">
+              <div className="flex justify-between max-w-lg mx-auto bg-zinc-200 rounded-lg shadow-md">
+                <div className="text-green-500 p-2 rounded flex-1 mr-2">
+                  <span className="font-semibold block mb-1">
+                    Total Income ₹{summary.income.toFixed(2)}
+                  </span>
+                </div>
+                <div className="text-red-500 p-2 rounded flex-1 ml-2">
+                  <span className="font-semibold block mb-1">
+                    Total Expenses ₹{summary.expense.toFixed(2)}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
 
           {/* RECORDS LIST SECTION */}
-          <div className="records-section space-y-2 pb-20 flex flex-col w-full px-2 overflow-y-auto max-h-[calc(100vh-250px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <div className="bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 space-y-2 flex flex-col w-full px-2 overflow-y-auto max-h-[calc(110vh-250px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             {Array.isArray(incomeExpenses) &&
               incomeExpenses
                 .filter(record => {
@@ -299,15 +316,16 @@ const IncomeExpense: React.FC = () => {
           </div>
 
           {/* ADD BUTTON SECTION - Appears AFTER records list, not floating */}
-          <div className="absolute bottom-0 left-0 right-0  px-4 pb-2">
-            {selectedMonth === new Date().getMonth() && selectedYear === new Date().getFullYear() && (
-              <div className="flex justify-center space-x-24">
+          <div className="fixed bottom-6  z-50 flex flex-col items-start space-y-2">
+            {showOptions && (
+              <>
                 <button
                   onClick={() => {
+                    setShowOptions(false);
                     setNewRecordType('income');
                     setIsAddModalOpen(true);
                   }}
-                  className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg"
+                  className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg shadow-lg"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -316,18 +334,27 @@ const IncomeExpense: React.FC = () => {
                 </button>
                 <button
                   onClick={() => {
+                    setShowOptions(false);
                     setNewRecordType('expense');
                     setIsAddModalOpen(true);
                   }}
-                  className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg"
+                  className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg shadow-lg"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                   Add Expense
                 </button>
-              </div>
+              </>
             )}
+            <button
+              onClick={() => setShowOptions(!showOptions)}
+              className="w-10 h-10 rounded-full  text-blue-500 flex items-center justify-center shadow-xl hover:bg-blue-700 hover:text-white transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={showOptions ? "M6 18L18 6M6 6l12 12" : "M12 4v16m8-8H4"} />
+              </svg>
+            </button>
           </div>
         </div>
 

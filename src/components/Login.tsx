@@ -36,7 +36,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         />
       </div>
 
-      <div className="mb-6">
+      <div className="mb-2">
         <label className="block text-sm font-semibold mb-1">Password</label>
         <input
           type="password"
@@ -45,6 +45,13 @@ const LoginForm: React.FC<LoginFormProps> = ({
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
           required
         />
+      </div>
+
+      {/* Forgot Password Link */}
+      <div className="mb-6 text-right">
+        <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
+          Forgot Password?
+        </Link>
       </div>
 
       <button

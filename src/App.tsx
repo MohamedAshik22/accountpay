@@ -8,12 +8,14 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './components/Profile';
 import Header from './components/Header';
 import ChatPage from './pages/Chat';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import ForgotPasswordPage from './pages/ForgotPassword';
 
 function App() {
   const location = useLocation();
 
   // Routes where header should not be shown
-  const noHeaderRoutes = ['/login', '/register'];
+  const noHeaderRoutes = ['/login', '/register', '/reset-password', '/forgot-password'];
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -23,6 +25,8 @@ function App() {
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>

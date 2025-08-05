@@ -30,7 +30,7 @@ const LoginPage: React.FC = () => {
       });
 
       // Get the token from the response
-      const token = res.data.token;
+      const token = res.data.access_token;
 
       // Save the token to localStorage
       localStorage.setItem('token', token);

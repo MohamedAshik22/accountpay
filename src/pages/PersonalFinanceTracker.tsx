@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router';
 import DeleteConfirmation from '../components/Delete';
 import AddRecordModal from '../components/AddRecord';
-import { ChevronDownIcon, ChevronUpIcon, MoreVertical } from 'lucide-react';
+import { ChevronDownIcon, ChevronUpIcon, MoreVertical, Pencil } from 'lucide-react';
 import MonthYearSelector from '../components/MonthYearSelector';
 import EditRecordForm from '../components/EditRecordForm';
 
@@ -301,9 +301,9 @@ const IncomeExpense: React.FC = () => {
                                   setEditingRecord(record);
                                   setActiveOptionsId(null);
                                 }}
-                                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                                className="block w-full text-left p-3 hover:bg-gray-100"
                               >
-                                Edit
+                               <Pencil className="h-5 w-5" />
                               </button>
                               <DeleteConfirmation onDelete={() => handleDelete(record.id)} />
                             </div>

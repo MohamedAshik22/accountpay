@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import AddRecordModal from './AddRecord';
+import AddRecordModal from '../components/AddRecord';
 import DeleteConfirmation from '../components/Delete';
 import EditRecordForm from '../components/EditRecordForm';
-import { MoreVertical } from 'lucide-react';
+import AdPlaceholder from '../components/Ad/AdPlaceholder';
+import { MoreVertical, Pencil, Check, X } from 'lucide-react';
+
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -22,7 +24,7 @@ interface IncomeExpense {
   amount: number;
   description: string;
   date: string;
-    timestamp: string;
+  timestamp: string;
 }
 
 const BookletView: React.FC = () => {
@@ -32,6 +34,10 @@ const BookletView: React.FC = () => {
   const [booklet, setBooklet] = useState<Booklet | null>(null);
   const [records, setRecords] = useState<IncomeExpense[]>([]);
   const [loading, setLoading] = useState(true);
+  // NEW state (put near your other useState hooks)
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState('');
+  const [savingName, setSavingName] = useState(false);
 
   // States for add record
   const [showOptions, setShowOptions] = useState(false);
@@ -84,6 +90,43 @@ const BookletView: React.FC = () => {
 
     if (id) fetchBooklet();
   }, [id, navigate]);
+
+  // NEW handler (put with your other handlers)
+  const handleUpdateBookletName = async () => {
+    if (!booklet) return;
+    const trimmed = nameInput.trim();
+    if (!trimmed || trimmed === booklet.name) {
+      setIsEditingName(false);
+      setNameInput('');
+      return;
+    }
+
+    try {
+      setSavingName(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      // assuming your API updates name at PUT /booklets/:id
+      const res = await axios.put(
+        `${apiUrl}/booklets/${booklet.id}`,
+        { name: trimmed, description: booklet.description ?? '' },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // update local state optimistically from response (or just set name)
+      setBooklet(prev => (prev ? { ...prev, name: res.data?.name ?? trimmed } : prev));
+      setIsEditingName(false);
+      setNameInput('');
+    } catch (err) {
+      console.error('Failed to update booklet name', err);
+      alert('Could not update the booklet name.');
+    } finally {
+      setSavingName(false);
+    }
+  };
 
   const handleAdd = async () => {
     const amount = parseFloat(newRecordAmount);
@@ -173,7 +216,52 @@ const BookletView: React.FC = () => {
     <div className="max-w-3xl mx-auto mt-8 p-6 bg-white rounded-xl shadow">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-fuchsia-600">{booklet.name}</h1>
+        <div className="flex items-center gap-2">
+          {!isEditingName ? (
+            <>
+              <h1 className="text-2xl font-bold text-fuchsia-600">{booklet.name}</h1>
+              <button
+                onClick={() => {
+                  setNameInput(booklet.name);
+                  setIsEditingName(true);
+                }}
+                className="p-1 rounded hover:bg-gray-100 text-gray-600"
+                title="Edit name"
+              >
+                <Pencil className="h-5 w-5" />
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-2">
+              <input
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                className="border rounded px-2 py-1 text-lg"
+                autoFocus
+                disabled={savingName}
+              />
+              <button
+                onClick={handleUpdateBookletName}
+                disabled={savingName}
+                className="p-1 rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-60"
+                title="Save"
+              >
+                <Check className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => {
+                  setIsEditingName(false);
+                  setNameInput('');
+                }}
+                disabled={savingName}
+                className="p-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-60"
+                title="Cancel"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          )}
+        </div>
         <Link
           to="/"
           className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm"
@@ -181,76 +269,102 @@ const BookletView: React.FC = () => {
           ← Back
         </Link>
       </div>
-
+      <AdPlaceholder />
       {booklet.description && (
         <p className="text-gray-600 mb-4">{booklet.description}</p>
       )}
 
-      {/* RECORDS LIST */}
+      {/* RECORDS LIST — bubbles: income left, expense right */}
       {records.length === 0 ? (
         <p className="text-gray-500">No records yet.</p>
       ) : (
-        <ul className="space-y-2">
-          {records.map((r) => (
-            <li
-              key={r.id}
-              className={`p-3 border rounded-lg flex justify-between items-center ${
-                r.type === 'income' ? 'bg-green-50' : 'bg-red-50'
-              }`}
-            >
-              {editingRecord && editingRecord.id === r.id ? (
-                <EditRecordForm
-                  editingRecord={editingRecord}
-                  setEditingRecord={setEditingRecord}
-                  handleEdit={handleEdit}
-                />
-              ) : (
-                <>
-                  <div>
-                    <p className="text-sm text-gray-600">{r.description}</p>
-                    <p className="text-xs text-gray-400">{r.date}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="font-bold">
-                      {r.type === 'income' ? '+' : '-'}₹{r.amount}
+        <ul className="space-y-2 flex flex-col w-full list-none">
+          {records.map((r) => {
+            const isIncome = r.type === 'income';
+            return (
+              <li
+                key={r.id}
+                className={[
+                  'p-3 border rounded-lg shadow-sm flex items-center gap-3 w-fit max-w-[85%]',
+                  isIncome
+                    ? 'self-start bg-green-50 flex-row'      // income bubble left → row normal
+                    : 'self-end bg-red-50 flex-row-reverse', // expense bubble right → row reversed
+                ].join(' ')}
+              >
+                {editingRecord && editingRecord.id === r.id ? (
+                  <EditRecordForm
+                    editingRecord={editingRecord}
+                    setEditingRecord={setEditingRecord}
+                    handleEdit={handleEdit}
+                  />
+                ) : (
+                  <>
+                    {/* Text block */}
+                    <div className={['flex-grow', isIncome ? 'text-left' : 'text-right'].join(' ')}>
+                      <span
+                        className={[
+                          'text-lg font-bold',
+                          isIncome ? 'text-green-700' : 'text-red-700',
+                        ].join(' ')}
+                      >
+                        {isIncome ? '+' : '-'}₹{Number(r.amount).toFixed(2)}
+                      </span>
+                      <p className="text-gray-700 text-sm break-words">{r.description}</p>
+                      <p className="text-gray-400 text-xs">{r.date}</p>
                     </div>
-                    <div className="relative">
+
+                    {/* Options menu – always on inside edge */}
+                    <div className="relative shrink-0">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setActiveOptionsId(prev =>
-                            prev === r.id ? null : r.id
-                          );
+                          setActiveOptionsId(prev => (prev === r.id ? null : r.id));
                         }}
                         className="text-gray-500 hover:bg-gray-100 p-1 rounded"
                       >
                         <MoreVertical className="h-5 w-5" />
                       </button>
+
                       {activeOptionsId === r.id && (
-                        <div className="absolute right-0 top-full z-10 bg-white border rounded shadow-lg options-menu mt-1">
+                        <div
+                          className={[
+                            'absolute top-full z-10 bg-white border rounded shadow-lg options-menu mt-1',
+                            isIncome ? 'right-0' : 'left-0', // anchor inward
+                          ].join(' ')}
+                        >
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setEditingRecord(r);
                               setActiveOptionsId(null);
                             }}
-                            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                            className="block w-full text-left p-3 hover:bg-gray-100"
                           >
-                            Edit
+                            <Pencil className="h-5 w-5" />
                           </button>
-                          <DeleteConfirmation onDelete={() => handleDelete(r.id)} />
+
+                          <DeleteConfirmation
+                            onDelete={async () => {
+                              await handleDelete(r.id);
+                              setActiveOptionsId(null);
+                            }}
+                            
+                          />
                         </div>
                       )}
                     </div>
-                  </div>
-                </>
-              )}
-            </li>
-          ))}
+                  </>
+                )}
+              </li>
+            );
+          })}
         </ul>
+
       )}
 
+
       {/* FAB BUTTONS */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-2">
+      <div className="fixed bottom-20 right-6 z-50 flex flex-col items-end space-y-2">
         {showOptions && (
           <>
             <button

@@ -10,7 +10,7 @@ import Header from './components/Header';
 import ChatPage from './pages/Chat';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ForgotPasswordPage from './pages/ForgotPassword';
-import BookletView from './components/Booklet';
+import BookletView from './pages/Booklet';
 import BookletCreate from './components/BookletCreate';
 import BookletListPage from './components/BookletListPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';

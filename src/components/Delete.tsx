@@ -24,9 +24,9 @@ const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({ onDelete }) => 
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 shadow"
+        className="p-3 rounded hover:bg-red-100 text-red-600 "
       >
-        Delete
+         <Trash2 className="h-5 w-5" />
       </button>
 
       <Dialog open={isOpen} onClose={() => !isDeleting && setIsOpen(false)} className="fixed z-50 inset-0 overflow-y-auto">

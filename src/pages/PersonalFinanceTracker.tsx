@@ -316,7 +316,7 @@ const IncomeExpense: React.FC = () => {
           </div>
 
           {/* ADD BUTTON SECTION - Appears AFTER records list, not floating */}
-          <div className="fixed bottom-6  z-50 flex flex-col items-start space-y-2">
+          <div className="fixed bottom-20 z-50 flex flex-col items-start space-y-2">
             {showOptions && (
               <>
                 <button

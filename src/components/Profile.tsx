@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import AdPlaceholder from './Ad/AdPlaceholder';
 
 interface JwtPayload {
   userId: number;
@@ -152,7 +153,8 @@ const Profile: React.FC = () => {
   }
 
   return (
-      <div className="flex justify-center items-start h-[90vh] bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 pt-20 p-6">
+    <div className="h-full flex flex-col items-center justify-center bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 p-6">
+         <AdPlaceholder />
         <div className="bg-white max-w-md w-full rounded-3xl shadow-2xl p-8 flex flex-col items-center">
           {/* Profile Avatar */}
           <div className="relative w-28 h-28 rounded-full shadow-xl overflow-hidden mb-6">
@@ -227,7 +229,7 @@ const Profile: React.FC = () => {
 
           {/* Divider */}
           <div className="w-16 border-b-4 border-pink-400 rounded-full my-6"></div>
-
+          <AdPlaceholder />
           {/* Contact Info */}
           <div className="w-full space-y-5">
             <div className="flex justify-between px-6">
@@ -239,12 +241,13 @@ const Profile: React.FC = () => {
               <span className="text-gray-800 font-medium break-words">{profile.email}</span>
             </div>
           </div>
-
+         
           {/* Footer */}
           <div className="mt-10 text-sm text-gray-400 italic select-none">
             Accountpay.in
           </div>
         </div>
+        <AdPlaceholder />
       </div>
   );
 };

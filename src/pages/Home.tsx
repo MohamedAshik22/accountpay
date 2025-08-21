@@ -8,6 +8,8 @@ import { User } from 'lucide-react';
 import UserList from '../components/UserList';
 import UserByPhoneSearch from '../components/Credebt/UserByPhoneSearch';
 import RecentUsers from '../components/RecentUsers';
+import BookletList from '../components/BookletList';
+import AdPlaceholder from '../components/Ad/AdPlaceholder';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -100,9 +102,11 @@ const Home: React.FC = () => {
 
                 <div className="space-x-4 space-y-6 ">
                     <UserByPhoneSearch />
+                    <AdPlaceholder />
                     <RecentUsers loggedInUserId={userId} apiBaseUrl={apiUrl} />
                     {/* <UserList /> */}
-
+                    <BookletList />
+                    <AdPlaceholder />
                     {/* <AnalyticsDashboard records={incomeExpenses} /> */}
                     <LastFiveDaysSummary records={records} /> 
                 </div>

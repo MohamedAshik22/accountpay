@@ -6,6 +6,7 @@ import { Transaction, TransactionList } from "../components/Credebt/TransactionL
 import { ClearRequestPanel } from "../components/Credebt/ClearRequestPanel";
 import { NewTransactionForm } from "../components/Credebt/NewTransactionForm";
 import { ClearRequestList } from "../components/Credebt/ClearRequestList";
+import AdPlaceholder from "../components/Ad/AdPlaceholder";
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -15,39 +16,25 @@ const ChatPage: React.FC = () => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [balance, setBalance] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
-    const [clearRequests, setClearRequests] = useState<Transaction[]>([]); // reusing Transaction type
+    const [clearRequests, setClearRequests] = useState<Transaction[]>([]);
     const combinedTransactions = [...transactions, ...clearRequests];
-
-
 
     const fetchData = async () => {
         const token = localStorage.getItem("token");
-
         if (!token) {
             setError("User not authenticated.");
             return;
         }
-
         try {
-            setError(null); // clear previous errors
-
+            setError(null);
             const [txRes, balRes, userRes] = await Promise.all([
-                axios.get(`${apiUrl}/chat/${userA}/${userB}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-                axios.get(`${apiUrl}/transactions/balance/${userA}/${userB}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-                axios.get(`${apiUrl}/users/${userB}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
+                axios.get(`${apiUrl}/chat/${userA}/${userB}`, { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get(`${apiUrl}/transactions/balance/${userA}/${userB}`, { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get(`${apiUrl}/users/${userB}`, { headers: { Authorization: `Bearer ${token}` } }),
             ]);
-
             setTransactions(txRes.data.transactions || []);
             setBalance(balRes.data.net_balance ?? 0);
             setUserBInfo(userRes.data);
-            console.log(userRes.data);
-
         } catch (err: any) {
             console.error("Failed to fetch transaction data", err);
             setError(err.response?.data?.error || "Something went wrong while fetching data.");
@@ -59,37 +46,42 @@ const ChatPage: React.FC = () => {
     };
 
     useEffect(() => {
-        if (userA && userB) {
-            fetchData();
-        }
+        if (userA && userB) fetchData();
     }, [userA, userB]);
 
     if (!userA || !userB) return <p className="text-center mt-10">Invalid users.</p>;
 
     return (
-        <div className="bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 max-h-[calc(100vh-250px)]">
-        <div className="pt-6 px-2 bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 max-w-4xl mx-auto h-[93vh] flex flex-col space-y-4">
-        {/* <div className="min-h-screen bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 p-6 flex flex-col"> */}
-            <h1 className="text-2xl font-bold">{userBInfo?.firstName}</h1>
-
-            {error && <p className="text-red-500">{error}</p>}
-            <div className=" flex justify-between bg-gray-100 items-center">
-                <BalanceCard netBalance={balance} />
-                {balance > 0 && (
-                    <ClearRequestPanel userA={userA} userB={userB} netBalance={balance} onClearSuccess={fetchData} />
-                )}
+        <div className="h-full min-h-0 flex flex-col bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100">
+            {/* Top (static) */}
+            <div className="max-w-4xl w-full mx-auto px-2 pt-6 space-y-4">
+                <h1 className="text-2xl font-bold">{userBInfo?.firstName}</h1>
+                {error && <p className="text-red-500">{error}</p>}
+                <div className="flex justify-between items-center bg-gray-100 rounded-lg p-3">
+                    <BalanceCard netBalance={balance} />
+                    {balance > 0 && (
+                        <ClearRequestPanel
+                            userA={userA}
+                            userB={userB}
+                            netBalance={balance}
+                            onClearSuccess={fetchData}
+                        />
+                    )}
+                </div>
+                <ClearRequestList senderId={userB} receiverId={userA} onAccept={handleAccept} />
+            </div>
+            <AdPlaceholder />
+            {/* Middle (scrolls) */}
+            <div className="max-w-4xl w-full mx-auto px-2 py-2 flex-1 min-h-0">
+                <div className="h-full rounded-xl p-2 bg-white shadow overflow-y-auto">
+                    <TransactionList transactions={combinedTransactions} userA={userA} />
+                </div>
             </div>
 
-                <ClearRequestList
-                    senderId={userB}
-                    receiverId={userA}
-                    onAccept={handleAccept}
-                />
-                  <div className="flex-1 overflow-y-auto  rounded-xl p-2 bg-white shadow">
-            <TransactionList transactions={combinedTransactions} userA={userA} />
+            {/* Bottom (static) */}
+            <div className="max-w-4xl w-full mx-auto px-2 pb-4">
+                <NewTransactionForm userA={userA} userB={userB} onTransactionCreated={fetchData} />
             </div>
-            <NewTransactionForm userA={userA} userB={userB} onTransactionCreated={fetchData} />
-        </div>
         </div>
     );
 };

@@ -96,17 +96,17 @@ const Home: React.FC = () => {
     }, []); // Empty dependency array ensures this runs once when the component mounts
 
     return (
-        <div className=' bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100'>
+        <div className=' bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 pb-4'>
             <div className="flex flex-col items-center pt-8">
                 <h1 className="text-2xl font-bold text-fuchsia-600">Welcome {firstName}</h1>
 
                 <div className="space-x-4 space-y-6 ">
                     <UserByPhoneSearch />
-                    <AdPlaceholder />
+                    {/* <AdPlaceholder /> */}
                     <RecentUsers loggedInUserId={userId} apiBaseUrl={apiUrl} />
                     {/* <UserList /> */}
                     <BookletList />
-                    <AdPlaceholder />
+                    {/* <AdPlaceholder /> */}
                     {/* <AnalyticsDashboard records={incomeExpenses} /> */}
                     <LastFiveDaysSummary records={records} /> 
                 </div>

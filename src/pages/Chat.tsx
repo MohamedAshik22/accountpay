@@ -70,7 +70,7 @@ const ChatPage: React.FC = () => {
                 </div>
                 <ClearRequestList senderId={userB} receiverId={userA} onAccept={handleAccept} />
             </div>
-            <AdPlaceholder />
+            {/* <AdPlaceholder /> */}
             {/* Middle (scrolls) */}
             <div className="max-w-4xl w-full mx-auto px-2 py-2 flex-1 min-h-0">
                 <div className="h-full rounded-xl p-2 bg-white shadow overflow-y-auto">

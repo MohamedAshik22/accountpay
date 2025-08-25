@@ -19,16 +19,25 @@ import Footer from './components/Footer';
 function App() {
   const location = useLocation();
   const noHeaderRoutes = ['/login', '/register', '/reset-password', '/forgot-password'];
-
-  const showHeaderFooter = !noHeaderRoutes.includes(location.pathname);
+  const showHeader = !noHeaderRoutes.includes(location.pathname);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* ✅ Static Header */}
-      {showHeaderFooter && <Header />}
+    <div className="min-h-dvh flex flex-col bg-white">
+      {/* Fixed Header */}
+      {showHeader && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow">
+          <Header />
+        </div>
+      )}
 
-      {/* ✅ Scrollable Content */}
-      <main className="flex-1 overflow-y-auto">
+      {/* Main Content */}
+      <main
+        className={
+          showHeader
+            ? "flex-1 overflow-y-auto pt-14" // adjust pt-16 to match Header height
+            : "flex-1"
+        }
+      >
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
@@ -48,10 +57,10 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           </Route>
         </Routes>
-      </main>
+      {/* <Footer /> */}
 
-      {/* ✅ Static Footer */}
-      {showHeaderFooter && <Footer />}
+      </main>
+      <Footer />
     </div>
   );
 }

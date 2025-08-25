@@ -269,7 +269,7 @@ const BookletView: React.FC = () => {
           ← Back
         </Link>
       </div>
-      <AdPlaceholder />
+      {/* <AdPlaceholder /> */}
       {booklet.description && (
         <p className="text-gray-600 mb-4">{booklet.description}</p>
       )}

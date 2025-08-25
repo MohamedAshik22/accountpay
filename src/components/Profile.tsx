@@ -154,7 +154,7 @@ const Profile: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col items-center justify-center bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 p-6">
-         <AdPlaceholder />
+         {/* <AdPlaceholder /> */}
         <div className="bg-white max-w-md w-full rounded-3xl shadow-2xl p-8 flex flex-col items-center">
           {/* Profile Avatar */}
           <div className="relative w-28 h-28 rounded-full shadow-xl overflow-hidden mb-6">
@@ -229,7 +229,7 @@ const Profile: React.FC = () => {
 
           {/* Divider */}
           <div className="w-16 border-b-4 border-pink-400 rounded-full my-6"></div>
-          <AdPlaceholder />
+          {/* <AdPlaceholder /> */}
           {/* Contact Info */}
           <div className="w-full space-y-5">
             <div className="flex justify-between px-6">
@@ -247,7 +247,7 @@ const Profile: React.FC = () => {
             Accountpay.in
           </div>
         </div>
-        <AdPlaceholder />
+        {/* <AdPlaceholder /> */}
       </div>
   );
 };

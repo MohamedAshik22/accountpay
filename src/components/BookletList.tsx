@@ -45,7 +45,7 @@ const BookletList: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
       <Link
           to="/booklets"
-          className="px-4 py-2  text-fuchsia-600 rounded-lg hover:bg-fuchsia-700"
+          className="px-4 py-2  text-fuchsia-600 rounded-lg hover:bg-fuchsia-100"
         >
         <h2 className="text-lg font-semibold">Your Booklets</h2>
         </Link>
@@ -64,12 +64,10 @@ const BookletList: React.FC = () => {
           {booklets.map((b) => (
             <li
               key={b.id}
-              className="p-3 rounded-lg hover:bg-gray-50 flex justify-between"
             >
-             
               <Link
                 to={`/booklets/${b.id}`}
-                className="text-fuchsia-600 hover:underline"
+                 className="block p-3 rounded-lg hover:bg-gray-50"
               >
                 <h3 className="font-medium text-black">{b.name}</h3>
                 <p className="text-sm text-gray-500">{b.description}</p>

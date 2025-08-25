@@ -196,7 +196,7 @@ const IncomeExpense: React.FC = () => {
   };
 
   return (
-    <div className='h-[93vh] bg-white'>
+    <div className='min-h-[93vh] bg-white'>
       <div className="max-w-lg  mx-auto px-2 bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 rounded-lg shadow-md flex flex-col">
         <div className="page-container flex flex-col space-y-2">
 

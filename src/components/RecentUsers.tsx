@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../lib/authClient";
 
 interface User {
   id: string;
@@ -26,7 +27,7 @@ const RecentUsers: React.FC<RecentUsersProps> = ({ loggedInUserId, apiBaseUrl })
   const fetchRecentUsers = async () => {
     setLoading(true);
     try {
-      const res = await axios.get<User[]>(`${apiBaseUrl}/users/${loggedInUserId}/recent-users`, {
+      const res = await api.get<User[]>(`${apiBaseUrl}/users/${loggedInUserId}/recent-users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -86,7 +87,7 @@ const RecentUsers: React.FC<RecentUsersProps> = ({ loggedInUserId, apiBaseUrl })
       ) : (
         <ul
           className="grid grid-cols-4 gap-4"
-          style={{ maxHeight: "400px", overflowY: "auto" }}
+          style={{ maxHeight: "470px", overflowY: "auto" }}
         >
           {recentUsers.map((user) => (
             <li

@@ -7,6 +7,7 @@ import { ClearRequestPanel } from "../components/Credebt/ClearRequestPanel";
 import { NewTransactionForm } from "../components/Credebt/NewTransactionForm";
 import { ClearRequestList } from "../components/Credebt/ClearRequestList";
 import AdPlaceholder from "../components/Ad/AdPlaceholder";
+import api from "../lib/authClient";
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -28,9 +29,9 @@ const ChatPage: React.FC = () => {
         try {
             setError(null);
             const [txRes, balRes, userRes] = await Promise.all([
-                axios.get(`${apiUrl}/chat/${userA}/${userB}`, { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get(`${apiUrl}/transactions/balance/${userA}/${userB}`, { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get(`${apiUrl}/users/${userB}`, { headers: { Authorization: `Bearer ${token}` } }),
+                api.get(`${apiUrl}/chat/${userA}/${userB}`, { headers: { Authorization: `Bearer ${token}` } }),
+                api.get(`${apiUrl}/transactions/balance/${userA}/${userB}`, { headers: { Authorization: `Bearer ${token}` } }),
+                api.get(`${apiUrl}/users/${userB}`, { headers: { Authorization: `Bearer ${token}` } }),
             ]);
             setTransactions(txRes.data.transactions || []);
             setBalance(balRes.data.net_balance ?? 0);

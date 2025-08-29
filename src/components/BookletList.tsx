@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import api from '../lib/authClient';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -22,7 +23,7 @@ const BookletList: React.FC = () => {
       if (!token) return;
 
       try {
-        const res = await axios.get(`${apiUrl}/booklets`, {
+        const res = await api.get(`${apiUrl}/booklets`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBooklets(res.data || []);

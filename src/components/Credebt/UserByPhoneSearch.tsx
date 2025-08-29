@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiPhone } from 'react-icons/fi';
+import api from '../../lib/authClient';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -27,7 +28,7 @@ const UserByPhoneSearch: React.FC = () => {
       if (!phoneQuery.trim() || !token) return;
 
       try {
-        const response = await axios.get(`${apiUrl}/users/search?phone=${phoneQuery}`, {
+        const response = await api.get(`${apiUrl}/users/search?phone=${phoneQuery}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -62,7 +63,7 @@ const UserByPhoneSearch: React.FC = () => {
     try {
       const payload = { contactUserId };
 
-      const response = await axios.post(
+      const response = await api.post(
         `${apiUrl}/users/${loggedInUserId}/recent-users`,
         payload,
         {

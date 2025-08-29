@@ -6,6 +6,7 @@ import AddRecordModal from '../components/AddRecord';
 import { ChevronDownIcon, ChevronUpIcon, MoreVertical, Pencil } from 'lucide-react';
 import MonthYearSelector from '../components/MonthYearSelector';
 import EditRecordForm from '../components/EditRecordForm';
+import api from '../lib/authClient';
 
 interface IncomeExpense {
   id: string;
@@ -53,7 +54,7 @@ const IncomeExpense: React.FC = () => {
         return;
       }
 
-      const recordsResponse = await axios.get(`${apiUrl}/income-expenses`, {
+      const recordsResponse = await api.get(`${apiUrl}/income-expenses`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -131,7 +132,7 @@ const IncomeExpense: React.FC = () => {
         return;
       }
 
-      const response = await axios.post(`${apiUrl}/income-expenses`,
+      const response = await api.post(`${apiUrl}/income-expenses`,
         {
           type: newRecordType,
           amount,
@@ -162,7 +163,7 @@ const IncomeExpense: React.FC = () => {
         return;
       }
 
-      const response = await axios.put(`${apiUrl}/income-expenses/${editingRecord.id}`,
+      const response = await api.put(`${apiUrl}/income-expenses/${editingRecord.id}`,
         {
           type: editingRecord.type,
           amount: editingRecord.amount,
@@ -181,7 +182,7 @@ const IncomeExpense: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`${apiUrl}/income-expenses/${id}`, {
+      await api.delete(`${apiUrl}/income-expenses/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

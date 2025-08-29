@@ -10,6 +10,7 @@ import UserByPhoneSearch from '../components/Credebt/UserByPhoneSearch';
 import RecentUsers from '../components/RecentUsers';
 import BookletList from '../components/BookletList';
 import AdPlaceholder from '../components/Ad/AdPlaceholder';
+import api from '../lib/authClient';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -51,7 +52,7 @@ const Home: React.FC = () => {
             if (!token || !userId) return;
 
             try {
-                const res = await axios.get(`${apiUrl}/users/${userId}`, {
+                const res = await api.get(`${apiUrl}/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -75,7 +76,7 @@ const Home: React.FC = () => {
             if (!token) return;
 
             try {
-                const response = await axios.get(`${apiUrl}/income-expenses`, {
+                const response = await api.get(`${apiUrl}/income-expenses`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

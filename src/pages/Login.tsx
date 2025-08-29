@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/Login';
-import { jwtDecode } from 'jwt-decode'; // Correct named import for jwt-decode
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios'; 
+import api from '../lib/authClient';
 
 interface JwtPayload {
   userId: number;
@@ -24,39 +25,38 @@ const LoginPage: React.FC = () => {
     setError(null);
 
     try {
+      // 🔑 Login request (use raw axios, no token needed here)
       const res = await axios.post(`${apiUrl}/auth/login`, {
         loginIdentifier,
         password
       });
 
-      // Get the token from the response
-      const token = res.data.access_token;
+      const { access_token, refresh_token } = res.data;
 
-      // Save the token to localStorage
-      localStorage.setItem('token', token);
+      // Save tokens
+      localStorage.setItem('token', access_token);
+      localStorage.setItem('refreshToken', refresh_token);
 
-      // Decode the token to extract user details
-      const decodedToken = jwtDecode<JwtPayload>(token); // Decode with JwtPayload type
+      // Decode access token to extract user details
+      const decodedToken = jwtDecode<JwtPayload>(access_token);
 
-      // Assuming the user ID is stored under 'userId' or 'user_id'
+      // Get user info
       const userId = decodedToken.userId || decodedToken.user_id || decodedToken.id;
       const firstName = decodedToken.firstName || '';
       console.log('User ID from decoded token:', userId);
 
-      // Save the userId in localStorage
+      // Save to storage
       localStorage.setItem('userId', userId.toString());
       localStorage.setItem('firstName', firstName);
 
-      // 🔍 Fetch user's profile to get created_at
-      const profileRes = await axios.get(`${apiUrl}/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      // 🔍 Fetch user's profile with the token (use api instance now)
+      const profileRes = await api.get(`/users/${userId}`);
       const createdAt = profileRes.data?.created_at;
       if (createdAt) {
         localStorage.setItem('userCreatedDate', createdAt);
       }
 
-      // Navigate after successful login
+      // ✅ Navigate after login
       navigate('/');
     } catch (err) {
       console.error(err);

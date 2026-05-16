@@ -274,6 +274,22 @@ const BookletView: React.FC = () => {
         <p className="text-gray-600 mb-4">{booklet.description}</p>
       )}
 
+      {/* total income expense tab */}
+      <div className="flex gap-4 mb-6">
+        <div className="flex-1 p-4 bg-green-50 rounded-lg text-center">
+          <p className="text-sm text-green-700">Total Income</p>
+          <p className="text-xl font-bold text-green-900">
+            ₹{records.filter(r => r.type === 'income').reduce((sum, r) => sum + r.amount, 0).toFixed(2)}
+          </p>
+        </div>
+        <div className="flex-1 p-4 bg-red-50 rounded-lg text-center">
+          <p className="text-sm text-red-700">Total Expense</p>
+          <p className="text-xl font-bold text-red-900">
+            ₹{records.filter(r => r.type === 'expense').reduce((sum, r) => sum + r.amount, 0).toFixed(2)}
+          </p>
+        </div>
+      </div>
+
       {/* RECORDS LIST — bubbles: income left, expense right */}
       {records.length === 0 ? (
         <p className="text-gray-500">No records yet.</p>
